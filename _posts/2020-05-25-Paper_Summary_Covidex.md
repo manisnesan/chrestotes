@@ -2,7 +2,7 @@
 toc: true
 layout: post
 description: Paper Summary of covidex.ai 
-categories: [markdown]
+categories: [markdown], [information-retrieval], [deep-learning], [papers]
 title: Paper Summary - Rapidly Deploying a Neural Search Engine for the COVID-19 Open Research Dataset
 ---
 # Paper Summary - Rapidly Deploying a Neural Search Engine for the COVID-19 Open Research Dataset
