@@ -2,10 +2,9 @@
 toc: true
 layout: post
 description: DVC as tool for model and data versioning and create reproducible ML project. 
-categories: [markdown], [machine-learning]
+categories: [machine-learning]
 title: Tracking Data and Model in Machine Learning projects
 ---
-# Tracking Data and Model in Machine Learning projects
 
 ## Why should you track everything
 
