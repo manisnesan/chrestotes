@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>https://manisnesan.github.io/chrestotes/markdown/2020/05/25/Paper_Summary_Covidex.html</loc>
+<loc>https://manisnesan.github.io/chrestotes/information-retrieval/deep-learning/papers/2020/05/25/Paper_Summary_Covidex.html</loc>
 <lastmod>2020-05-25T00:00:00-05:00</lastmod>
 </url>
 <url>
-<loc>https://manisnesan.github.io/chrestotes/markdown/2020/06/29/tracking-data-model-using-dvc.html</loc>
+<loc>https://manisnesan.github.io/chrestotes/machine-learning/2020/06/29/tracking-data-model-using-dvc.html</loc>
 <lastmod>2020-06-29T00:00:00-05:00</lastmod>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/intent-detection/text-classification/information-retrieval/query-understanding/machine-learning/2020/09/20/intent-detection.html</loc>
+<lastmod>2020-09-20T00:00:00-05:00</lastmod>
 </url>
 <url>
 <loc>https://manisnesan.github.io/chrestotes/about/</loc>
