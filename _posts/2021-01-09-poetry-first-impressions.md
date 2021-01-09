@@ -1,3 +1,11 @@
+---
+title: Poetry First Impressions
+description: Getting started with poetry for dependency management & packaging.
+toc: true
+layout: post
+categories: [python, reproducibility]
+---
+
 # Poetry First Impressions
 
 Recently I inherited a python project which did not have dependency management setup and this post is a summary of my investigation using Poetry.
@@ -10,7 +18,7 @@ Recently I inherited a python project which did not have dependency management s
 - Tracking the transitive dependencies.
 - Locking the dependencies when we are ready to push the code.
 
-## Key Requirements 
+## Key Requirements
 
 - Reproducibility and Consistency are the key aspects for maintaining the project.
 - Managing dependencies in a python project and relying on a single tool (eg: pip, conda)
