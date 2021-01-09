@@ -1,0 +1,197 @@
+<h1 id="poetry-first-impressions">Poetry First Impressions</h1>
+
+<p>Recently I inherited a python project which did not have dependency management setup and this post is a summary of my investigation using Poetry.</p>
+
+<h2 id="issues-happening-in-the-project">Issues happening in the project</h2>
+
+<ul>
+  <li>Different python versions used by developers and in production.</li>
+  <li>setup.py not maintained</li>
+  <li>Differentiating the dev dependencies vs production dependencies is hard with a single requirements.txt file</li>
+  <li>Tracking the transitive dependencies.</li>
+  <li>Locking the dependencies when we are ready to push the code.</li>
+</ul>
+
+<h2 id="key-requirements">Key Requirements</h2>
+
+<ul>
+  <li>Reproducibility and Consistency are the key aspects for maintaining the project.</li>
+  <li>Managing dependencies in a python project and relying on a single tool (eg: pip, conda)</li>
+</ul>
+
+<h3 id="test-drive-with-poetry">Test Drive with Poetry</h3>
+
+<ul>
+  <li><a href="https://python-poetry.org/docs/">Poetry</a></li>
+</ul>
+
+<blockquote>
+  <p>Poetry is a tool for dependency management and packaging in Python. It allows you to declare the libraries your project depends on and it will manage (install/update) them for you.</p>
+</blockquote>
+
+<ul>
+  <li>Getting Started on Linux</li>
+</ul>
+
+<p><code class="highlighter-rouge">$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+</code></p>
+<ul>
+  <li>To start a new project <code class="highlighter-rouge">poetry new &lt;project-name&gt;</code>. If you have an existing project then <code class="highlighter-rouge">poetry init</code> - guide you through setting a project specific pyproject.toml config.</li>
+</ul>
+
+<ol>
+  <li>Package, version, description, author, compatible versions</li>
+  <li>Main Dependencies</li>
+  <li>Development Dependencies</li>
+</ol>
+
+<ul>
+  <li>Format of pyproject.toml config
+    <div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[tool.poetry]</span>
+<span class="py">name</span> <span class="p">=</span> <span class="s">"language-detection"</span>
+<span class="py">version</span> <span class="p">=</span> <span class="s">"0.1.0"</span>
+<span class="py">description</span> <span class="p">=</span> <span class="s">"Detects the language of the provided text using fasttext."</span>
+<span class="py">authors</span> <span class="p">=</span> <span class="p">[</span><span class="s">"Your Name &lt;you@example.com&gt;"</span><span class="p">]</span>
+<span class="nn">[tool.poetry.dependencies]</span>
+<span class="py">python</span> <span class="p">=</span> <span class="s">"^3.6"</span>
+<span class="py">fasttext</span> <span class="p">=</span> <span class="s">"0.9.1"</span>
+<span class="py">Flask</span> <span class="p">=</span> <span class="s">"1.1.1"</span>
+<span class="py">gunicorn</span> <span class="p">=</span> <span class="s">"20.0.4"</span>
+<span class="nn">[tool.poetry.dev-dependencies]</span>
+<span class="py">codecov</span> <span class="p">=</span> <span class="s">"2.1.7"</span>
+<span class="py">flake8</span> <span class="p">=</span> <span class="s">"^3.8.4"</span>
+<span class="py">black</span> <span class="p">=</span> <span class="s">"^20.8b1"</span>
+<span class="py">pytest</span> <span class="p">=</span> <span class="s">"^6.2.1"</span>
+<span class="py">pytest-cov</span> <span class="p">=</span> <span class="s">"^2.10.1"</span>
+<span class="nn">[build-system]</span>
+<span class="py">requires</span> <span class="p">=</span> <span class="nn">["poetry-core&gt;=1.0.0"]</span>
+<span class="py">build-backend</span> <span class="p">=</span> <span class="s">"poetry.core.masonry.api"</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Manage virtual environments - Poetry automatically creates a virtual environments for you based on the project when you ran <em>new</em> or <em>init</em>. You can know more info using the following commands &amp; use either <code class="highlighter-rouge">poetry shell</code> or <code class="highlighter-rouge">source &lt;cache_dir&gt;/pypoetry/virtualenvs/&lt;project_venv&gt;/bin/activate</code> to activate the environment. <code class="highlighter-rouge">deactivate</code> if you want to exit the environment.</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$  poetry env info
+
+Virtualenv
+Python:         3.8.6
+Implementation: CPython
+Path:           /home/msivanes/.cache/pypoetry/virtualenvs/language-detection-ddSi-Wir-py3.8
+Valid:          True
+
+System
+Platform: linux
+OS:       posix
+Python:   /usr
+
+$ poetry config --list
+cache-dir = "/home/msivanes/.cache/pypoetry"
+experimental.new-installer = true
+installer.parallel = true
+virtualenvs.create = true
+virtualenvs.in-project = null
+virtualenvs.path = "{cache-dir}/virtualenvs"  # /home/msivanes/.cache/pypoetry/virtualenvs
+
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>Add dependency through <code class="highlighter-rouge">poetry add &lt;package&gt;</code> or <code class="highlighter-rouge">poetry add &lt;package&gt;@&lt;version&gt;</code></p>
+
+    <p><code class="highlighter-rouge">$ poetry add Flask</code></p>
+
+    <p><code class="highlighter-rouge">$ poetry add fasttext@0.9.1</code></p>
+
+    <p><code class="highlighter-rouge">$ poetry add pytest</code></p>
+  </li>
+  <li>
+    <p>Remove a dependency using <code class="highlighter-rouge">poetry remove &lt;package&gt;</code></p>
+
+    <p><code class="highlighter-rouge">$ poetry remove pyfasttext</code></p>
+  </li>
+  <li>
+    <p>Once you finish adding the dependencies, run <code class="highlighter-rouge">poetry install</code> to install all the dependencies in your project. This will generate the <em>poetry.lock</em> file. This is where all the dependencies are locked and needs to be version controlled. If any other developer run <code class="highlighter-rouge">poetry install</code> then poetry uses the exact same versions specified in the dependencies while installing. This ensures all the developers are using a consistent dependencies across the board.</p>
+  </li>
+  <li>
+    <p>If you want to upgrade the dependencies and use the latest versions, then use <code class="highlighter-rouge">poetry update</code>. This is the equivalent of deleting the poetry.lock and using <em>install</em> .</p>
+  </li>
+  <li>
+    <p>Exporting the requirements.txt if you want to containarize your app.</p>
+
+    <p><code class="highlighter-rouge">$ poetry export --without-hashes -f requirements.txt &gt; requirements.txt</code></p>
+  </li>
+  <li>
+    <p>For scenarios in libraries where you want to perform an editable install and hence you need a setup.py file. (Github user <a href="https://github.com/albireox">@albireox</a> provided a script to quickly create setup.py which I found it <a href="https://github.com/python-poetry/poetry/issues/761#issuecomment-678113547">here</a></p>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# @Author: José Sánchez-Gallego (gallegoj@uw.edu)
+# @Date: 2019-12-18
+# @Filename: create_setup.py
+# @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
+</span>
+<span class="c1"># This is a temporary solution for the fact that pip install . fails with
+# poetry when there is no setup.py and an extension needs to be compiled.
+# See https://github.com/python-poetry/poetry/issues/1516. Running this
+# script creates a setup.py filled out with information generated by
+# poetry when parsing the pyproject.toml.
+</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">distutils.version</span> <span class="kn">import</span> <span class="n">StrictVersion</span>
+
+
+<span class="c1"># If there is a global installation of poetry, prefer that.
+</span><span class="n">lib</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">'~/.poetry/lib'</span><span class="p">)</span>
+<span class="n">vendors</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="s">'poetry'</span><span class="p">,</span> <span class="s">'_vendor'</span><span class="p">)</span>
+<span class="n">current_vendors</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">vendors</span><span class="p">,</span> <span class="s">'py{}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="s">'.'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">2</span><span class="p">]))</span>
+<span class="p">)</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lib</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">current_vendors</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">poetry.core.factory</span> <span class="kn">import</span> <span class="n">Factory</span>
+        <span class="kn">from</span> <span class="nn">poetry.core.masonry.builders.sdist</span> <span class="kn">import</span> <span class="n">SdistBuilder</span>
+    <span class="k">except</span> <span class="p">(</span><span class="nb">ImportError</span><span class="p">,</span> <span class="nb">ModuleNotFoundError</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">poetry.masonry.builders.sdist</span> <span class="kn">import</span> <span class="n">SdistBuilder</span>
+        <span class="kn">from</span> <span class="nn">poetry.factory</span> <span class="kn">import</span> <span class="n">Factory</span>
+    <span class="kn">from</span> <span class="nn">poetry.__version__</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="k">except</span> <span class="p">(</span><span class="nb">ImportError</span><span class="p">,</span> <span class="nb">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">ee</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="nb">ImportError</span><span class="p">(</span><span class="s">'install poetry by doing pip install poetry to use '</span>
+                      <span class="n">f</span><span class="s">'this script: {ee}'</span><span class="p">)</span>
+
+
+<span class="c1"># Generate a Poetry object that knows about the metadata in pyproject.toml
+</span><span class="n">factory</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">()</span>
+<span class="n">poetry</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_poetry</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+
+<span class="c1"># Use the SdistBuilder to genrate a blob for setup.py
+</span><span class="k">if</span> <span class="n">StrictVersion</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">StrictVersion</span><span class="p">(</span><span class="s">'1.1.0b1'</span><span class="p">):</span>
+    <span class="n">sdist_builder</span> <span class="o">=</span> <span class="n">SdistBuilder</span><span class="p">(</span><span class="n">poetry</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sdist_builder</span> <span class="o">=</span> <span class="n">SdistBuilder</span><span class="p">(</span><span class="n">poetry</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+<span class="n">setuppy_blob</span> <span class="o">=</span> <span class="n">sdist_builder</span><span class="o">.</span><span class="n">build_setup</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'setup.py'</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">unit</span><span class="p">:</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">setuppy_blob</span><span class="p">)</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">b</span><span class="s">'</span><span class="se">\n</span><span class="s"># This setup.py was autogenerated using poetry.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="challenges">Challenges</h2>
+
+<ul>
+  <li>I still have issues with pyenv which I need to figure how to  <a href="https://github.com/pyenv/pyenv#how-it-works">easily switch between python versions</a></li>
+</ul>
+
+<h2 id="references">References</h2>
+
+<ul>
+  <li><a href="https://python-poetry.org/docs/basic-usage/">Poetry Documentation</a></li>
+</ul>
