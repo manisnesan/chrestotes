@@ -35,12 +35,13 @@ Recently I inherited a python project which did not have dependency management s
 `
 - To start a new project `poetry new <project-name>`. If you have an existing project then `poetry init` - guide you through setting a project specific pyproject.toml config.
 
-1. Package, version, description, author, compatible versions
-2. Main Dependencies
-3. Development Dependencies
+  1. Package, version, description, author, compatible versions
+  2. Main Dependencies
+  3. Development Dependencies
 
 - Format of pyproject.toml config
-```toml
+
+  ```toml
 [tool.poetry]
 name = "language-detection"
 version = "0.1.0"
