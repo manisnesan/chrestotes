@@ -151,17 +151,18 @@ window.onload = wrap_img;
 <p><code class="highlighter-rouge">$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 </code></p>
 <ul>
-  <li>To start a new project <code class="highlighter-rouge">poetry new &lt;project-name&gt;</code>. If you have an existing project then <code class="highlighter-rouge">poetry init</code> - guide you through setting a project specific pyproject.toml config.</li>
-</ul>
+  <li>
+    <p>To start a new project <code class="highlighter-rouge">poetry new &lt;project-name&gt;</code>. If you have an existing project then <code class="highlighter-rouge">poetry init</code> - guide you through setting a project specific pyproject.toml config.</p>
 
-<ol>
-  <li>Package, version, description, author, compatible versions</li>
-  <li>Main Dependencies</li>
-  <li>Development Dependencies</li>
-</ol>
+    <ol>
+      <li>Package, version, description, author, compatible versions</li>
+      <li>Main Dependencies</li>
+      <li>Development Dependencies</li>
+    </ol>
+  </li>
+  <li>
+    <p>Format of pyproject.toml config</p>
 
-<ul>
-  <li>Format of pyproject.toml config
     <div class="language-toml highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="nn">[tool.poetry]</span>
 <span class="py">name</span> <span class="p">=</span> <span class="s">"language-detection"</span>
@@ -184,7 +185,9 @@ window.onload = wrap_img;
 <span class="py">build-backend</span> <span class="p">=</span> <span class="s">"poetry.core.masonry.api"</span>
 </code></pre></div>    </div>
   </li>
-  <li>Manage virtual environments - Poetry automatically creates a virtual environments for you based on the project when you ran <em>new</em> or <em>init</em>. You can know more info using the following commands &amp; use either <code class="highlighter-rouge">poetry shell</code> or <code class="highlighter-rouge">source &lt;cache_dir&gt;/pypoetry/virtualenvs/&lt;project_venv&gt;/bin/activate</code> to activate the environment. <code class="highlighter-rouge">deactivate</code> if you want to exit the environment.</li>
+  <li>
+    <p>Manage virtual environments - Poetry automatically creates a virtual environments for you based on the project when you ran <em>new</em> or <em>init</em>. You can know more info using the following commands &amp; use either <code class="highlighter-rouge">poetry shell</code> or <code class="highlighter-rouge">source &lt;cache_dir&gt;/pypoetry/virtualenvs/&lt;project_venv&gt;/bin/activate</code> to activate the environment. <code class="highlighter-rouge">deactivate</code> if you want to exit the environment.</p>
+  </li>
 </ul>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$  poetry env info

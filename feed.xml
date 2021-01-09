@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://manisnesan.github.io/chrestotes/feed.xml" rel="self" type="application/atom+xml" /><link href="https://manisnesan.github.io/chrestotes/" rel="alternate" type="text/html" /><updated>2021-01-09T09:39:27-06:00</updated><id>https://manisnesan.github.io/chrestotes/feed.xml</id><title type="html">Chrestotes</title><subtitle>A Commonplace blog is to document my learning on whatever that interests me at the moment. Read more about the name Commonplace here https://en.wikipedia.org/wiki/Commonplace_book</subtitle><entry><title type="html">Poetry First Impressions</title><link href="https://manisnesan.github.io/chrestotes/python/reproducibility/2021/01/09/poetry-first-impressions.html" rel="alternate" type="text/html" title="Poetry First Impressions" /><published>2021-01-09T00:00:00-06:00</published><updated>2021-01-09T00:00:00-06:00</updated><id>https://manisnesan.github.io/chrestotes/python/reproducibility/2021/01/09/poetry-first-impressions</id><content type="html" xml:base="https://manisnesan.github.io/chrestotes/python/reproducibility/2021/01/09/poetry-first-impressions.html">&lt;h1 id=&quot;poetry-first-impressions&quot;&gt;Poetry First Impressions&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://manisnesan.github.io/chrestotes/feed.xml" rel="self" type="application/atom+xml" /><link href="https://manisnesan.github.io/chrestotes/" rel="alternate" type="text/html" /><updated>2021-01-09T09:45:55-06:00</updated><id>https://manisnesan.github.io/chrestotes/feed.xml</id><title type="html">Chrestotes</title><subtitle>A Commonplace blog is to document my learning on whatever that interests me at the moment. Read more about the name Commonplace here https://en.wikipedia.org/wiki/Commonplace_book</subtitle><entry><title type="html">Poetry First Impressions</title><link href="https://manisnesan.github.io/chrestotes/python/reproducibility/2021/01/09/poetry-first-impressions.html" rel="alternate" type="text/html" title="Poetry First Impressions" /><published>2021-01-09T00:00:00-06:00</published><updated>2021-01-09T00:00:00-06:00</updated><id>https://manisnesan.github.io/chrestotes/python/reproducibility/2021/01/09/poetry-first-impressions</id><content type="html" xml:base="https://manisnesan.github.io/chrestotes/python/reproducibility/2021/01/09/poetry-first-impressions.html">&lt;h1 id=&quot;poetry-first-impressions&quot;&gt;Poetry First Impressions&lt;/h1&gt;
 
 &lt;p&gt;Recently I inherited a python project which did not have dependency management setup and this post is a summary of my investigation using Poetry.&lt;/p&gt;
 
@@ -36,17 +36,18 @@
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 &lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;To start a new project &lt;code class=&quot;highlighter-rouge&quot;&gt;poetry new &amp;lt;project-name&amp;gt;&lt;/code&gt;. If you have an existing project then &lt;code class=&quot;highlighter-rouge&quot;&gt;poetry init&lt;/code&gt; - guide you through setting a project specific pyproject.toml config.&lt;/li&gt;
-&lt;/ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;To start a new project &lt;code class=&quot;highlighter-rouge&quot;&gt;poetry new &amp;lt;project-name&amp;gt;&lt;/code&gt;. If you have an existing project then &lt;code class=&quot;highlighter-rouge&quot;&gt;poetry init&lt;/code&gt; - guide you through setting a project specific pyproject.toml config.&lt;/p&gt;
 
-&lt;ol&gt;
-  &lt;li&gt;Package, version, description, author, compatible versions&lt;/li&gt;
-  &lt;li&gt;Main Dependencies&lt;/li&gt;
-  &lt;li&gt;Development Dependencies&lt;/li&gt;
-&lt;/ol&gt;
+    &lt;ol&gt;
+      &lt;li&gt;Package, version, description, author, compatible versions&lt;/li&gt;
+      &lt;li&gt;Main Dependencies&lt;/li&gt;
+      &lt;li&gt;Development Dependencies&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Format of pyproject.toml config&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;Format of pyproject.toml config
     &lt;div class=&quot;language-toml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;[tool.poetry]&lt;/span&gt;
 &lt;span class=&quot;py&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;language-detection&quot;&lt;/span&gt;
 &lt;span class=&quot;py&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;0.1.0&quot;&lt;/span&gt;
@@ -68,7 +69,9 @@
 &lt;span class=&quot;py&quot;&gt;build-backend&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;poetry.core.masonry.api&quot;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
   &lt;/li&gt;
-  &lt;li&gt;Manage virtual environments - Poetry automatically creates a virtual environments for you based on the project when you ran &lt;em&gt;new&lt;/em&gt; or &lt;em&gt;init&lt;/em&gt;. You can know more info using the following commands &amp;amp; use either &lt;code class=&quot;highlighter-rouge&quot;&gt;poetry shell&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;source &amp;lt;cache_dir&amp;gt;/pypoetry/virtualenvs/&amp;lt;project_venv&amp;gt;/bin/activate&lt;/code&gt; to activate the environment. &lt;code class=&quot;highlighter-rouge&quot;&gt;deactivate&lt;/code&gt; if you want to exit the environment.&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Manage virtual environments - Poetry automatically creates a virtual environments for you based on the project when you ran &lt;em&gt;new&lt;/em&gt; or &lt;em&gt;init&lt;/em&gt;. You can know more info using the following commands &amp;amp; use either &lt;code class=&quot;highlighter-rouge&quot;&gt;poetry shell&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;source &amp;lt;cache_dir&amp;gt;/pypoetry/virtualenvs/&amp;lt;project_venv&amp;gt;/bin/activate&lt;/code&gt; to activate the environment. &lt;code class=&quot;highlighter-rouge&quot;&gt;deactivate&lt;/code&gt; if you want to exit the environment.&lt;/p&gt;
+  &lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$  poetry env info
