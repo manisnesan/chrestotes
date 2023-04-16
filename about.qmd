@@ -1,0 +1,21 @@
+---
+title: "About"
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/manisnesan
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/manisnesan
+    - icon: github
+      text: Github
+      href: https://github.com/manisnesan
+
+---
+
+I am Manikandan Sivanesan, currently working as a Principal Software Engineer @ Red Hat on Search Relevance, Language Understanding and Ranking. I’m currently learning Deep Learning as a fast.ai international fellow.
+
+This blog is a medium to teach the past version of myself and serve as a documentation to my future self about things that I'm curious about at a given point in time.  
