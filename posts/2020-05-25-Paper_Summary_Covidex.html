@@ -1,0 +1,233 @@
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Paper Summary - Rapidly Deploying a Neural Search Engine for the COVID-19 Open Research Dataset</h1><p class="page-description">Paper Summary of covidex.ai</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-05-25T00:00:00-05:00" itemprop="datePublished">
+        May 25, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      9 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chrestotes/categories/#information-retrieval">information-retrieval</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chrestotes/categories/#deep-learning">deep-learning</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chrestotes/categories/#papers">papers</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#paper-summary---rapidly-deploying-a-neural-search-engine-for-the-covid-19-open-research-dataset">Paper Summary - Rapidly Deploying a Neural Search Engine for the COVID-19 Open Research Dataset</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#overview-of-covidexai">Overview of covidex.ai</a></li>
+<li class="toc-entry toc-h2"><a href="#motivation">Motivation</a></li>
+<li class="toc-entry toc-h2"><a href="#outcomes">Outcomes</a></li>
+<li class="toc-entry toc-h2"><a href="#background--related-work">Background &amp; Related Work</a></li>
+<li class="toc-entry toc-h2"><a href="#modular-and-reusable-keyword-search">Modular and Reusable Keyword Search</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#anserini">Anserini</a></li>
+<li class="toc-entry toc-h3"><a href="#indexing">Indexing</a></li>
+<li class="toc-entry toc-h3"><a href="#searching">Searching</a></li>
+<li class="toc-entry toc-h3"><a href="#highlighting">Highlighting</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#neural-covidex-for-reranking">Neural Covidex for reranking</a></li>
+<li class="toc-entry toc-h2"><a href="#challenges-in-results-evaluation">Challenges in Results Evaluation</a></li>
+<li class="toc-entry toc-h2"><a href="#author-reflections">Author Reflections</a></li>
+<li class="toc-entry toc-h2"><a href="#insights--takeaways-from-this-paper">Insights &amp; Takeaways from this paper</a></li>
+</ul>
+</li>
+</ul><h1 id="paper-summary---rapidly-deploying-a-neural-search-engine-for-the-covid-19-open-research-dataset">
+<a class="anchor" href="#paper-summary---rapidly-deploying-a-neural-search-engine-for-the-covid-19-open-research-dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Paper Summary - Rapidly Deploying a Neural Search Engine for the COVID-19 Open Research Dataset</h1>
+
+<h2 id="overview-of-covidexai">
+<a class="anchor" href="#overview-of-covidexai" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview of covidex.ai</h2>
+
+<p>This is a paper summary of deploying a Neural Search Engine to answer questions from the COVID-19 dataset.</p>
+
+<ul>
+  <li><a href="https://openreview.net/pdf?id=PlUA_mgGaPq">Paper</a></li>
+  <li><a href="http://covidex.ai">covidex.ai</a></li>
+  <li><a href="https://twitter.com/lintool/status/1248668833713467392?s=20">Twitter Announcement by Jimmy Lin</a></li>
+</ul>
+
+<blockquote>
+  <p>Neural Covidex applies state-of-the-art neural network models and artificial intelligence (AI) techniques to answer questions using the COVID-19 Open Research Dataset (CORD-19) provided by the Allen Institute for AI (data release of April 3, 2020).
+This project is led by Jimmy Lin from the University of Waterloo and Kyunghyun Cho from NYU, with a small team of wonderful students: Edwin Zhang and Nikhil Gupta. Special thanks to Colin Raffel for his help in pretraining T5 models for the biomedical domain.”</p>
+</blockquote>
+
+<p><img src="https://forums.fast.ai/uploads/default/original/3X/2/2/22fbefd8abb7063ab24722cdda185c523abba6ec.png" alt="alt text"></p>
+
+<h2 id="motivation">
+<a class="anchor" href="#motivation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Motivation</h2>
+
+<p>The ongoing pandemic crisis poses a huge challenge to get timely information for public health officials, clinicians, researchers, virologists. In order to respond to this challenge, Allen AI publishes a COVID-19  data set (CORD-19) in collaboration with other research groups. The source for this data set is both research articles published about coronovirus and other related research articles.
+The aim of this effort is to bring researchers</p>
+
+<ul>
+  <li>to apply language processing techniques in order to generate insights &amp; make data driven decisions.</li>
+  <li>to provide ways for the front line to consume the recent developments in a digestible form &amp; apply in the field.</li>
+</ul>
+
+<h2 id="outcomes">
+<a class="anchor" href="#outcomes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Outcomes</h2>
+
+<p>Jimmy Lin &amp; his research team responded to this call.  The two strategies adopted were</p>
+
+<ul>
+  <li>Real time users should be able to find answers to any questions associated with COVID</li>
+  <li>Other Researchers should be able reuse the components they build. Providing a modular and reusable components is set as part of the requirements.</li>
+</ul>
+
+<p>The team decided to build end to end real time search application called covidex.ai . They developed the components that powers this engine in a short span of time for the information retrieval need .</p>
+
+<ul>
+  <li>
+<strong>keyword based search interface :</strong>  This also provides <strong>faceted navigation</strong> in the form of filters like author, article source, time range and <strong>highlighting</strong> words from the results that matches with user query.</li>
+  <li>
+<strong>neural ranking component</strong> that sorts the results with the top most results answering user’s question.</li>
+</ul>
+
+<h2 id="background--related-work">
+<a class="anchor" href="#background--related-work" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background &amp; Related Work</h2>
+
+<p>Traditional search architecture comprises of two phases Content Indexing and Keyword Searching. During indexing, content is transformed into an Indexable form called as Document The search engine convert this document into a fundamental data structure called as Inverted Index. This is similar to what you see in Book Appendix where terms are mapped towards the pages. Similarly Inverted index contains terms mapped towards docIds where the term appears &amp; position in the document.</p>
+
+<p>Searching phase is further divided into two stages <strong>retrieval stage</strong> and <strong>ranking stage</strong>. In the first stage, given a search term(s) you will retrieve the list of matching documents from the inverted index. In the second stage, the matched documents are sorted based on the computed relevance score.</p>
+
+<p><strong>Modern</strong> <strong>Search Architectures</strong></p>
+
+<p>More modern multi-stage search architectures from Bing &amp; Alibaba expand the Search Phase with additional reranking stages. Except for the first retrieval stage, the additional subsequent ranking stages will rerank and refine the results further from previous stages .</p>
+
+<h2 id="modular-and-reusable-keyword-search">
+<a class="anchor" href="#modular-and-reusable-keyword-search" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modular and Reusable Keyword Search</h2>
+
+<h3 id="anserini">
+<a class="anchor" href="#anserini" aria-hidden="true"><span class="octicon octicon-link"></span></a>Anserini</h3>
+
+<p>Anserini is an opensource Information Retrieval toolkit in order to solve the reproducibility problems in research and bridge the gap between research and real world systems. This is a tool that is built on top of Lucene, a popular open source search library &amp; enhanced with features specific for conducting IR research. <strong>pyserini</strong> is a python interface to Anserini.</p>
+
+<h3 id="indexing">
+<a class="anchor" href="#indexing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Indexing</h3>
+
+<p>The first challenge faced by the team is representing the <strong>Indexable Document.</strong> This is fundamental unit of search engine. Results are basically collection of documents. Eg: Tweets, WebPage, Article</p>
+
+<p>One of the common challenge wrt Information Retrieval systems, they tend to favor longer documents. In order to give all documents a fairer chances irrespective of its length, normalization is needed.</p>
+
+<p>The articles are in the following format</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="err">title</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">“Impact</span><span class="w"> </span><span class="err">of</span><span class="w">  </span><span class="err">Masks”</span><span class="p">,</span><span class="w">
+  </span><span class="err">abstract:</span><span class="w"> </span><span class="err">“Masks</span><span class="w"> </span><span class="err">protects</span><span class="w"> </span><span class="err">others</span><span class="w"> </span><span class="err">from</span><span class="w"> </span><span class="err">you.”</span><span class="w">
+  </span><span class="err">body_text</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">“Effectiveness</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">mask</span><span class="w"> </span><span class="err">/n</span><span class="w"> </span><span class="err">/n</span><span class="w"> </span><span class="err">This</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="err">being</span><span class="w"> </span><span class="err">studied</span><span class="w"> </span><span class="err">…..”</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>In order to compare the effectiveness, the team decide to index the articles in 3 different ways</p>
+
+<ul>
+  <li>Index only the title and abstract of the article as a document</li>
+  <li>Index the entire text of the article as a document combining title, abstract and body_text</li>
+  <li>Break the body_text of the article into paragraphs and each paragraph as separate documents. In this case, the Indexable Document is title, abstract &amp; the paragraph.</li>
+</ul>
+
+<h3 id="searching">
+<a class="anchor" href="#searching" aria-hidden="true"><span class="octicon octicon-link"></span></a>Searching</h3>
+
+<p>Once the team built the lucene indices based on the above scheme for CORD-19, we can able to search for a given term,  retrieve matching documents and ranked them using BM25 scoring function. These indices are available for the researchers to perform further research.</p>
+
+<p>The full search pipeline for keyword search is demonstrated using <a href="https://github.com/castorini/anserini-notebooks/blob/master/pyserini_covid19_default.ipynb">notebooks using Pyserini</a>.</p>
+
+<p>In order to provide the users a live system that can be used to answer questions, the team leveraged their earlier work on <a href="https://www.semanticscholar.org/paper/Solr-Integration-in-the-Anserini-Information-Clancy-Eskildsen/31fc159be43811170b9906c5809c1583e9778151">anserini integration with Solr</a> , open source search platform. The user search interface is built using Blacklight discovery interface with Ruby on Rails for faceting &amp; highlighting.</p>
+
+<p><img src="https://d3i71xaburhd42.cloudfront.net/31fc159be43811170b9906c5809c1583e9778151/2-Figure1-1.png" alt="alt text"></p>
+
+<h3 id="highlighting">
+<a class="anchor" href="#highlighting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Highlighting</h3>
+
+<p>In addition to that the team also built a highlighting feature on of keyword search. This allows the user to quickly scan the results with the matched keywords in the document.</p>
+
+<p>It is built using <a href="https://www.semanticscholar.org/paper/BioBERT%3A-a-pre-trained-biomedical-language-model-Lee-Yoon/1e43c7084bdcb6b3102afaf301cce10faead2702">BioBERT</a>. The idea behind it is that a) the candidate matched documents &amp; convert them into sentences. b) Similarly the query is treated as a sentence. The sentences &amp; query are in turn converted into its numerical representations (vectors). Top sentences closer to the query are obtained using the <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a>. The top-K words in the context are highlighted in these top sentences.</p>
+
+<h2 id="neural-covidex-for-reranking">
+<a class="anchor" href="#neural-covidex-for-reranking" aria-hidden="true"><span class="octicon octicon-link"></span></a>Neural Covidex for reranking</h2>
+
+<p>The research group was  already working on the neural architectures specifically applying transfer learning on retrieval/ranking based problems.</p>
+
+<ul>
+  <li>BERT for query based Passage Ranking : Applying transfer learning for passage reranking pre-trained on MS-MARCO dataset</li>
+  <li>BERTserini for retrieval-based question answering: Incorporating Anserini Retriever to retrieve the top K segments of text followed by BERT based pre-trained model to retrieve the answer span.</li>
+</ul>
+
+<p>Typically the task of reranking is turn the problem into a classification task where we take the query, candidate_document &amp; predict the target as (relevant, not-relevant). To avoid the costly operation of performing classification on the entire corpus, this is applied at the reranking stages. The engine gets the top K documents from the previous retrieval stage and rerank them using machine learning model. As part of reranking stage, the team leveraged Sequence to Sequence Model for reranking (Nogueira et al. 2020).</p>
+
+<p>Stages involved in training the reranking model using Transfer Learning Methodology</p>
+
+<p>Pre-training →Fine Tuning → Inference</p>
+
+<ul>
+  <li>
+<strong>[Pre-training]</strong> Transformer based Language Model trained on MS Marco dataset</li>
+  <li>
+<strong>[Fine Tuning]</strong> Given a query q, document D, the model is fine tuned to predict the output as either <strong>true</strong> or <strong>false</strong> as targets indicating the relevance.</li>
+  <li>
+<strong>[Inference]</strong> In reranking setting, for each candidate documents, predict the prob distribution of (relevant, non-relevant) and sort the scores of relevant doc(<strong>true outputs</strong>) alone.</li>
+</ul>
+
+<p>Training a language model and the encoder from this fined tuned language model is normally used for the downstream tasks like Classification in transfer learning methodology. But this method of applying Sequence to Sequence model (<a href="https://ai.googleblog.com/2020/02/exploring-transfer-learning-with-t5.html">based on T5</a>) is quite new for document ranking setting (Nogueira et al., 2020).</p>
+
+<p>The reasoning provided was the predicted target words can capture the relatedness through pre-training. This is based on encoder-decoder architecture &amp; uses a similar masked language modeling objective. Given a query, document the model is fine tuned to produce true or false if the document is relevant or not to the query.</p>
+
+<h2 id="challenges-in-results-evaluation">
+<a class="anchor" href="#challenges-in-results-evaluation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Challenges in Results Evaluation</h2>
+
+<ul>
+  <li>
+    <p>The authors rightfully mention that the individual components comprising such a system is evaluated against various test datasets. But as this is specific to an evolving dataset like CORD-19, there is no such existing test collections.</p>
+  </li>
+  <li>
+    <p>It is not always necessary that ranking is the most important for such an end to end system. We have to switch to an <strong>outcome based measure</strong> rather than a single output based measure like batch retrieval evaluations(MRR, nDCG). Eg: “Did the researchers, practitioners get their questions answered?” How many of them are not finding the answers? So involving human in the loop to qualitatively evaluate the results is essential to know if the system is really contributing towards the efforts fighting the pandemic.</p>
+  </li>
+  <li>
+    <p>What if the exploratory users do not know the right type of keywords to use ? In that case ranking is a wrong goal to pursue.</p>
+  </li>
+  <li>
+    <p>Current challenge is all the targeted users are working on the front line and hard to provide qualitative feedback about search experience. So the author asks for more hallway usability testing to gather insights from the users.</p>
+  </li>
+</ul>
+
+<h2 id="author-reflections">
+<a class="anchor" href="#author-reflections" aria-hidden="true"><span class="octicon octicon-link"></span></a>Author Reflections</h2>
+
+<p>An end to end system like Covidex is not possible without the power of the current Open Source Software ecosystem, Open culture of curating, cleaning &amp; sharing the data with the community (Thanks to CORD-19 by Allen AI) and pre-trained language models like MS-Marco etc.</p>
+
+<p>Good software engineering practices is the foundation for a team and ensure that the underlying software components can be replicated &amp; reused to provide this system. This is essential to rapidly explore and experiment with new ideas.</p>
+
+<p>Building a strong research culture to produce the results in the form of open source software artifacts aid the community in reproducing the results and build on top of it.</p>
+
+<p>Reminder about the mismatch between producing research code for conference and building a system for a real users. For example concerns like latency of search requests, throughput about the number of users, deploying &amp; managing a system in production, user experience does not arise in a research setting.</p>
+
+<h2 id="insights--takeaways-from-this-paper">
+<a class="anchor" href="#insights--takeaways-from-this-paper" aria-hidden="true"><span class="octicon octicon-link"></span></a>Insights &amp; Takeaways from this paper</h2>
+
+<ul>
+  <li>Lack of proper training data &amp; human annotators is a common challenge. Leveraging pre-trained models on MS-MARCO is critical for ranking tasks in this type of situation.</li>
+  <li>The experimentation mindset need to be adopted and one need to interactive computing tools like pyserini to experiment with search index. This allows the search practitioners to constantly iterate and learn from these experiments.</li>
+  <li>Adoption of Openness in not only the source but science and data &amp; the way we work is truly inspiring.</li>
+</ul>
+
+  </div><a class="u-url" href="/chrestotes/posts/2020-05-25-Paper_Summary_Covidex.html" hidden></a>
+</article>
