@@ -1,0 +1,189 @@
+---
+aliases:
+- /python/reproducibility/2021/01/09/poetry-first-impressions
+categories:
+- python
+- reproducibility
+date: '2021-01-09'
+description: Getting started with poetry for dependency management & packaging.
+layout: post
+title: Poetry First Impressions
+toc: true
+
+---
+
+# Poetry First Impressions
+
+Recently I inherited a python project which did not have dependency management setup and this post is a summary of my investigation using Poetry.
+
+## Issues happening in the project
+
+- Different python versions used by developers and in production.
+- setup.py not maintained
+- Differentiating the dev dependencies vs production dependencies is hard with a single requirements.txt file
+- Tracking the transitive dependencies.
+- Locking the dependencies when we are ready to push the code.
+
+## Key Requirements
+
+- Reproducibility and Consistency are the key aspects for maintaining the project.
+- Managing dependencies in a python project and relying on a single tool (eg: pip, conda)
+
+### Test Drive with Poetry
+
+- [Poetry](https://python-poetry.org/docs/)
+
+> Poetry is a tool for dependency management and packaging in Python. It allows you to declare the libraries your project depends on and it will manage (install/update) them for you.
+
+- Getting Started on Linux
+
+ `$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+`
+- To start a new project `poetry new <project-name>`. If you have an existing project then `poetry init` - guide you through setting a project specific pyproject.toml config.
+
+  1. Package, version, description, author, compatible versions
+  2. Main Dependencies
+  3. Development Dependencies
+
+- Format of pyproject.toml config
+
+  ```toml
+[tool.poetry]
+name = "language-detection"
+version = "0.1.0"
+description = "Detects the language of the provided text using fasttext."
+authors = ["Your Name <you@example.com>"]
+[tool.poetry.dependencies]
+python = "^3.6"
+fasttext = "0.9.1"
+Flask = "1.1.1"
+gunicorn = "20.0.4"
+[tool.poetry.dev-dependencies]
+codecov = "2.1.7"
+flake8 = "^3.8.4"
+black = "^20.8b1"
+pytest = "^6.2.1"
+pytest-cov = "^2.10.1"
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+```
+
+- Manage virtual environments - Poetry automatically creates a virtual environments for you based on the project when you ran _new_ or _init_. You can know more info using the following commands & use either `poetry shell` or `source <cache_dir>/pypoetry/virtualenvs/<project_venv>/bin/activate` to activate the environment. `deactivate` if you want to exit the environment.
+
+```
+$  poetry env info
+
+Virtualenv
+Python:         3.8.6
+Implementation: CPython
+Path:           /home/msivanes/.cache/pypoetry/virtualenvs/language-detection-ddSi-Wir-py3.8
+Valid:          True
+
+System
+Platform: linux
+OS:       posix
+Python:   /usr
+
+$ poetry config --list
+cache-dir = "/home/msivanes/.cache/pypoetry"
+experimental.new-installer = true
+installer.parallel = true
+virtualenvs.create = true
+virtualenvs.in-project = null
+virtualenvs.path = "{cache-dir}/virtualenvs"  # /home/msivanes/.cache/pypoetry/virtualenvs
+
+```
+
+
+- Add dependency through `poetry add <package>` or `poetry add <package>@<version>`
+
+  `$ poetry add Flask`
+
+  `$ poetry add fasttext@0.9.1`
+
+  `$ poetry add pytest`
+
+- Remove a dependency using `poetry remove <package>`
+
+  `$ poetry remove pyfasttext`
+
+- Once you finish adding the dependencies, run `poetry install` to install all the dependencies in your project. This will generate the _poetry.lock_ file. This is where all the dependencies are locked and needs to be version controlled. If any other developer run `poetry install` then poetry uses the exact same versions specified in the dependencies while installing. This ensures all the developers are using a consistent dependencies across the board.
+
+- If you want to upgrade the dependencies and use the latest versions, then use `poetry update`. This is the equivalent of deleting the poetry.lock and using _install_ .
+
+- Exporting the requirements.txt if you want to containarize your app.
+
+  `$ poetry export --without-hashes -f requirements.txt > requirements.txt`
+
+- For scenarios in libraries where you want to perform an editable install and hence you need a setup.py file. (Github user [@albireox](https://github.com/albireox) provided a script to quickly create setup.py which I found it [here](https://github.com/python-poetry/poetry/issues/761#issuecomment-678113547)
+
+
+``` python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# @Author: José Sánchez-Gallego (gallegoj@uw.edu)
+# @Date: 2019-12-18
+# @Filename: create_setup.py
+# @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
+
+# This is a temporary solution for the fact that pip install . fails with
+# poetry when there is no setup.py and an extension needs to be compiled.
+# See https://github.com/python-poetry/poetry/issues/1516. Running this
+# script creates a setup.py filled out with information generated by
+# poetry when parsing the pyproject.toml.
+
+import os
+import sys
+from distutils.version import StrictVersion
+
+
+# If there is a global installation of poetry, prefer that.
+lib = os.path.expanduser('~/.poetry/lib')
+vendors = os.path.join(lib, 'poetry', '_vendor')
+current_vendors = os.path.join(
+    vendors, 'py{}'.format('.'.join(str(v) for v in sys.version_info[:2]))
+)
+
+sys.path.insert(0, lib)
+sys.path.insert(0, current_vendors)
+
+try:
+    try:
+        from poetry.core.factory import Factory
+        from poetry.core.masonry.builders.sdist import SdistBuilder
+    except (ImportError, ModuleNotFoundError):
+        from poetry.masonry.builders.sdist import SdistBuilder
+        from poetry.factory import Factory
+    from poetry.__version__ import __version__
+except (ImportError, ModuleNotFoundError) as ee:
+    raise ImportError('install poetry by doing pip install poetry to use '
+                      f'this script: {ee}')
+
+
+# Generate a Poetry object that knows about the metadata in pyproject.toml
+factory = Factory()
+poetry = factory.create_poetry(os.path.dirname(__file__))
+
+# Use the SdistBuilder to genrate a blob for setup.py
+if StrictVersion(__version__) >= StrictVersion('1.1.0b1'):
+    sdist_builder = SdistBuilder(poetry, None)
+else:
+    sdist_builder = SdistBuilder(poetry, None, None)
+
+setuppy_blob = sdist_builder.build_setup()
+
+with open('setup.py', 'wb') as unit:
+    unit.write(setuppy_blob)
+    unit.write(b'\n# This setup.py was autogenerated using poetry.\n')
+```
+
+
+## Challenges
+
+- I still have issues with pyenv which I need to figure how to  [easily switch between python versions](https://github.com/pyenv/pyenv#how-it-works)
+
+## References
+
+- [Poetry Documentation](https://python-poetry.org/docs/basic-usage/)
