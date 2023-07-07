@@ -116,17 +116,6 @@
 
   
       ,"page6": {
-          "title": "Post With Code",
-          "content": "This is a post with executable code. .",
-          "url": "https://manisnesan.github.io/chrestotes/drafts/post-with-code/index.qmd",
-          "relUrl": "/drafts/post-with-code/index.qmd",
-          "date": ""
-      }
-      
-  
-
-  
-      ,"page7": {
           "title": "Welcome To My Blog",
           "content": "This is the first post in a Quarto blog. Welcome! . . Since this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts. .",
           "url": "https://manisnesan.github.io/chrestotes/drafts/welcome/index.qmd",
@@ -137,11 +126,22 @@
   
 
   
-      ,"page8": {
+      ,"page7": {
           "title": "chrestotes",
           "content": "",
           "url": "https://manisnesan.github.io/chrestotes/index.qmd",
           "relUrl": "/index.qmd",
+          "date": ""
+      }
+      
+  
+
+  
+      ,"page8": {
+          "title": "Post With Code",
+          "content": "This is a post with executable code. .",
+          "url": "https://manisnesan.github.io/chrestotes/drafts/post-with-code/index.qmd",
+          "relUrl": "/drafts/post-with-code/index.qmd",
           "date": ""
       }
       

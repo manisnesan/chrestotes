@@ -1,51 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/drafts/vaccination_tweets_sp.html</loc>
-    <lastmod>2023-04-16T18:41:26.060Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/drafts/zindi_vaccination.html</loc>
-    <lastmod>2023-04-16T18:41:26.708Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/drafts/welcome/index.html</loc>
-    <lastmod>2023-04-16T18:41:27.071Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/drafts/post-with-code/index.html</loc>
-    <lastmod>2023-04-16T18:41:27.475Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/posts/2020-05-25-Paper_Summary_Covidex.html</loc>
-    <lastmod>2023-04-16T18:41:27.918Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/posts/2020-09-20-intent-detection.html</loc>
-    <lastmod>2023-04-16T18:41:28.560Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/posts/2023-04-14-fashion-mnist.html</loc>
-    <lastmod>2023-04-16T18:41:29.241Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/posts/2021-01-09-poetry-first-impressions.html</loc>
-    <lastmod>2023-04-16T18:41:29.575Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/posts/2020-06-29-tracking-data-model-using-dvc.html</loc>
-    <lastmod>2023-04-16T18:41:29.880Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/index.html</loc>
-    <lastmod>2023-04-16T18:41:30.222Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/CHANGES.html</loc>
-    <lastmod>2023-04-16T18:41:30.474Z</lastmod>
-  </url>
-  <url>
-    <loc>https://manisnesan.github.io/chrestotes/about.html</loc>
-    <lastmod>2023-04-16T18:41:30.718Z</lastmod>
-  </url>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://manisnesan.github.io/chrestotes/information-retrieval/deep-learning/papers/2020/05/25/Paper_Summary_Covidex.html</loc>
+<lastmod>2020-05-25T00:00:00-05:00</lastmod>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/machine-learning/2020/06/29/tracking-data-model-using-dvc.html</loc>
+<lastmod>2020-06-29T00:00:00-05:00</lastmod>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/intent-detection/text-classification/information-retrieval/query-understanding/machine-learning/2020/09/20/intent-detection.html</loc>
+<lastmod>2020-09-20T00:00:00-05:00</lastmod>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/python/reproducibility/2021/01/09/poetry-first-impressions.html</loc>
+<lastmod>2021-01-09T00:00:00-06:00</lastmod>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/2023/04/14/fashion-mnist.html</loc>
+<lastmod>2023-04-14T00:00:00-05:00</lastmod>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/posts/2020-05-25-Paper_Summary_Covidex.html</loc>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/posts/2020-06-29-tracking-data-model-using-dvc.html</loc>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/posts/2021-01-09-poetry-first-impressions.html</loc>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/about/</loc>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/search/</loc>
+</url>
+<url>
+<loc>https://manisnesan.github.io/chrestotes/categories/</loc>
+</url>
 </urlset>
