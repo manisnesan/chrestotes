@@ -1,132 +1,398 @@
-<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Tracking Data and Model in Machine Learning projects</h1><p class="page-description">DVC as tool for model and data versioning and create reproducible ML project.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-29T00:00:00-05:00" itemprop="datePublished">
-        Jun 29, 2020
-      </time>
-       • <span class="read-time" title="Estimated read time">
-    
-    
-      1 min read
-    
-</span></p>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.38">
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2020-06-29">
+<meta name="description" content="DVC as tool for model and data versioning and create reproducible ML project.">
+
+<title>chrestotes - Tracking Data and Model in Machine Learning projects</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">chrestotes</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html">About</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Tracking Data and Model in Machine Learning projects</h1>
+                  <div>
+        <div class="description">
+          DVC as tool for model and data versioning and create reproducible ML project.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">machine-learning</div>
+              </div>
+                  </div>
+  </div>
     
-      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+  
+  <div class="quarto-title-meta">
+
       
-        <a class="category-tags-link" href="/chrestotes/categories/#machine-learning">machine-learning</a>
-        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 29, 2020</p>
+      </div>
+    </div>
       
-      </p>
+    </div>
     
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-should-you-track-everything" id="toc-why-should-you-track-everything" class="nav-link active" data-scroll-target="#why-should-you-track-everything">Why should you track everything</a></li>
+  <li><a href="#dvc" id="toc-dvc" class="nav-link" data-scroll-target="#dvc">DVC</a>
+  <ul class="collapse">
+  <li><a href="#install-dvc-on-fedorarhelcentos" id="toc-install-dvc-on-fedorarhelcentos" class="nav-link" data-scroll-target="#install-dvc-on-fedorarhelcentos">Install DVC on Fedora/RHEL/CentOS</a></li>
+  </ul></li>
+  <li><a href="#workflow-for-model-packaging" id="toc-workflow-for-model-packaging" class="nav-link" data-scroll-target="#workflow-for-model-packaging">Workflow for Model Packaging</a>
+  <ul class="collapse">
+  <li><a href="#pushing-model-files" id="toc-pushing-model-files" class="nav-link" data-scroll-target="#pushing-model-files">Pushing model files</a></li>
+  <li><a href="#pulling-the-model" id="toc-pulling-the-model" class="nav-link" data-scroll-target="#pulling-the-model">Pulling the model</a></li>
+  </ul></li>
+  <li><a href="#food-for-thought" id="toc-food-for-thought" class="nav-link" data-scroll-target="#food-for-thought">Food for thought</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
-    </header>
 
-  <div class="post-content e-content" itemprop="articleBody">
-    <ul class="section-nav">
-<li class="toc-entry toc-h2"><a href="#why-should-you-track-everything">Why should you track everything</a></li>
-<li class="toc-entry toc-h2"><a href="#dvc">DVC</a>
+
+
+<section id="why-should-you-track-everything" class="level2">
+<h2 class="anchored" data-anchor-id="why-should-you-track-everything">Why should you track everything</h2>
 <ul>
-<li class="toc-entry toc-h3"><a href="#install-dvc-on-fedorarhelcentos">Install DVC on Fedora/RHEL/CentOS</a></li>
+<li>Difference between software engineering and machine learning projects</li>
+<li>code, config, dependencies vs code, data, model, config, dependencies</li>
+<li>Myriad of Data files (raw, intermediate)</li>
+<li>Not in repository</li>
+<li>Reproducible ML models targeting metrics [Experiments Link]</li>
+<li>Tuning and Experimentation tracking</li>
+<li>Model Deployment &amp; Revert</li>
 </ul>
-</li>
-<li class="toc-entry toc-h2"><a href="#workflow-for-model-packaging">Workflow for Model Packaging</a>
+</section>
+<section id="dvc" class="level2">
+<h2 class="anchored" data-anchor-id="dvc">DVC</h2>
 <ul>
-<li class="toc-entry toc-h3"><a href="#pushing-model-files">Pushing model files</a></li>
-<li class="toc-entry toc-h3"><a href="#pulling-the-model">Pulling the model</a></li>
-</ul>
-</li>
-<li class="toc-entry toc-h2"><a href="#food-for-thought">Food for thought</a></li>
-<li class="toc-entry toc-h2"><a href="#references">References</a></li>
-</ul><h2 id="why-should-you-track-everything">
-<a class="anchor" href="#why-should-you-track-everything" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why should you track everything</h2>
-
+<li><p>DVC is built to make ML models shareable and reproducible. It is designed to handle large files, data sets, machine learning models, and metrics as well as code.</p></li>
+<li><p>Experiments are tracked by combining the Code + Data files</p></li>
+<li><p>Data files</p>
 <ul>
-  <li>Difference between software engineering and machine learning projects</li>
-  <li>code, config, dependencies vs code, data, model, config, dependencies</li>
-  <li>Myriad of Data files (raw, intermediate)</li>
-  <li>Not in repository</li>
-  <li>Reproducible ML models targeting metrics [Experiments Link]</li>
-  <li>Tuning and Experimentation tracking</li>
-  <li>Model Deployment &amp; Revert</li>
+<li>Local cache</li>
+<li>Data remotes in S3, SSH etc</li>
+</ul></li>
+<li><p>Metrics per experiment</p></li>
+<li><p>Pipelines</p></li>
 </ul>
-
-<h2 id="dvc">
-<a class="anchor" href="#dvc" aria-hidden="true"><span class="octicon octicon-link"></span></a>DVC</h2>
-
-<ul>
-  <li>
-    <p>DVC is built to make ML models shareable and reproducible. It is designed to handle large files, data sets, machine learning models, and metrics as well as code.</p>
-  </li>
-  <li>Experiments are tracked by combining the Code + Data files</li>
-  <li>Data files
-    <ul>
-      <li>Local cache</li>
-      <li>Data remotes in S3, SSH etc</li>
-    </ul>
-  </li>
-  <li>Metrics per experiment</li>
-  <li>Pipelines</li>
-</ul>
-
-<h3 id="install-dvc-on-fedorarhelcentos">
-<a class="anchor" href="#install-dvc-on-fedorarhelcentos" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install DVC on Fedora/RHEL/CentOS</h3>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>wget https://dvc.org/rpm/dvc.repo <span class="nt">-O</span> /etc/yum.repos.d/dvc.repo
-<span class="nb">sudo </span>yum update
-<span class="nb">sudo </span>yum <span class="nb">install </span>dvc
-</code></pre></div></div>
-
+<section id="install-dvc-on-fedorarhelcentos" class="level3">
+<h3 class="anchored" data-anchor-id="install-dvc-on-fedorarhelcentos">Install DVC on Fedora/RHEL/CentOS</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> wget https://dvc.org/rpm/dvc.repo <span class="at">-O</span> /etc/yum.repos.d/dvc.repo</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum update</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum install dvc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Add DVC files in the Git (It is not required but it is good to have project and dvc config in the same directory)</p>
-
-<h2 id="workflow-for-model-packaging">
-<a class="anchor" href="#workflow-for-model-packaging" aria-hidden="true"><span class="octicon octicon-link"></span></a>Workflow for Model Packaging</h2>
-
+</section>
+</section>
+<section id="workflow-for-model-packaging" class="level2">
+<h2 class="anchored" data-anchor-id="workflow-for-model-packaging">Workflow for Model Packaging</h2>
 <ul>
-  <li>Setup for connecting to model repository during training development process</li>
-  <li>Push the trained model to the repository</li>
-  <li>Pull the model from the repository during the build process</li>
+<li>Setup for connecting to model repository during training development process</li>
+<li>Push the trained model to the repository</li>
+<li>Pull the model from the repository during the build process</li>
+</ul>
+<section id="pushing-model-files" class="level3">
+<h3 class="anchored" data-anchor-id="pushing-model-files">Pushing model files</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> init</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> remote add <span class="at">-d</span> gss-rdu-remote ssh://msivanes@gss-rdu-repo.usersys.redhat.com:/var/www/html/repo/config/ulmfit</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> add cases_small_sbr_08-06-2020.pkl</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-am</span> “Add ulmfit model to project”</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> push <span class="at">-v</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="pulling-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="pulling-the-model">Pulling the model</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="va">$REPO</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> pull <span class="co"># Pulls the data from remote-storage. Equivalent to dvc fetch followed by dvc checkout</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> checkout <span class="co">#Update model files</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="food-for-thought" class="level2">
+<h2 class="anchored" data-anchor-id="food-for-thought">Food for thought</h2>
+<ul>
+<li>Rather than feature branches, think in terms of experiment branches targeting metrics.</li>
+<li>Keep Data and Model files stored outside the repository</li>
+<li>Model files built as part of build process.</li>
+<li>Smoke test should validate the constructed model using validation set.</li>
+</ul>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li><a href="https://dvc.org/doc">DVC</a></li>
+<li><a href="https://www.globalsqa.com/dvc-cheat-sheet/">Cheatsheet</a></li>
+<li>https://christophergs.github.io/machine%20learning/2019/05/13/first-impressions-of-dvc/</li>
+<li>https://www.slideshare.net/DmitryPetrov15/pydata-berlin-2018-dvcorg</li>
 </ul>
 
-<h3 id="pushing-model-files">
-<a class="anchor" href="#pushing-model-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pushing model files</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dvc init
-dvc remote add <span class="nt">-d</span> gss-rdu-remote ssh://msivanes@gss-rdu-repo.usersys.redhat.com:/var/www/html/repo/config/ulmfit
+</section>
 
-dvc add cases_small_sbr_08-06-2020.pkl
-git commit <span class="nt">-am</span> “Add ulmfit model to project”
-dvc push <span class="nt">-v</span>
-</code></pre></div></div>
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
 
-<h3 id="pulling-the-model">
-<a class="anchor" href="#pulling-the-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pulling the model</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone <span class="nv">$REPO</span>
-git pull
-dvc pull <span class="c"># Pulls the data from remote-storage. Equivalent to dvc fetch followed by dvc checkout</span>
-dvc checkout <span class="c">#Update model files</span>
-</code></pre></div></div>
 
-<h2 id="food-for-thought">
-<a class="anchor" href="#food-for-thought" aria-hidden="true"><span class="octicon octicon-link"></span></a>Food for thought</h2>
-
-<ul>
-  <li>Rather than feature branches, think in terms of experiment branches targeting metrics.</li>
-  <li>Keep Data and Model files stored outside the repository</li>
-  <li>Model files built as part of build process.</li>
-  <li>Smoke test should validate the constructed model using validation set.</li>
-</ul>
-
-<h2 id="references">
-<a class="anchor" href="#references" aria-hidden="true"><span class="octicon octicon-link"></span></a>References</h2>
-
-<ul>
-  <li><a href="https://dvc.org/doc">DVC</a></li>
-  <li><a href="https://www.globalsqa.com/dvc-cheat-sheet/">Cheatsheet</a></li>
-  <li>https://christophergs.github.io/machine%20learning/2019/05/13/first-impressions-of-dvc/</li>
-  <li>https://www.slideshare.net/DmitryPetrov15/pydata-berlin-2018-dvcorg</li>
-</ul>
-
-  </div><a class="u-url" href="/chrestotes/posts/2020-06-29-tracking-data-model-using-dvc.html" hidden></a>
-</article>
+</body></html>
