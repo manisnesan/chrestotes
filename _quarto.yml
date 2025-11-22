@@ -21,6 +21,8 @@ format:
     smooth-scroll: true
     code-copy: true
     code-overflow: wrap
+    mermaid:
+      theme: default
 
 
 
