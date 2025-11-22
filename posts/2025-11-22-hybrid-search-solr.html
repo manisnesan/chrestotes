@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2025-11-22">
+<meta name="description" content="Understanding hybrid search and reranking strategies in Apache Solr">
+
+<title>Hybrid Search in Apache Solr - Learning Notes – chrestotes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-0b37c64f34216b628666a8dac638b53b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">chrestotes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Hybrid Search in Apache Solr - Learning Notes</h1>
+                  <div>
+        <div class="description">
+          Understanding hybrid search and reranking strategies in Apache Solr
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">information-retrieval</div>
+                <div class="quarto-category">apache-solr</div>
+                <div class="quarto-category">search</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">November 22, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#hybrid-search-in-apache-solr---learning-notes" id="toc-hybrid-search-in-apache-solr---learning-notes" class="nav-link active" data-scroll-target="#hybrid-search-in-apache-solr---learning-notes">Hybrid Search in Apache Solr - Learning Notes</a>
+  <ul class="collapse">
+  <li><a href="#what-is-this-about" id="toc-what-is-this-about" class="nav-link" data-scroll-target="#what-is-this-about">What is This About?</a></li>
+  <li><a href="#why-reranking-matters" id="toc-why-reranking-matters" class="nav-link" data-scroll-target="#why-reranking-matters">Why Reranking Matters</a></li>
+  <li><a href="#context-goal" id="toc-context-goal" class="nav-link" data-scroll-target="#context-goal">Context &amp; Goal</a></li>
+  <li><a href="#understanding-the-reranking-approach" id="toc-understanding-the-reranking-approach" class="nav-link" data-scroll-target="#understanding-the-reranking-approach">Understanding the Reranking Approach</a>
+  <ul class="collapse">
+  <li><a href="#the-two-stage-process" id="toc-the-two-stage-process" class="nav-link" data-scroll-target="#the-two-stage-process">The Two-Stage Process</a></li>
+  <li><a href="#high-level-flow" id="toc-high-level-flow" class="nav-link" data-scroll-target="#high-level-flow">High-Level Flow</a></li>
+  <li><a href="#why-retrieve-k2-first" id="toc-why-retrieve-k2-first" class="nav-link" data-scroll-target="#why-retrieve-k2-first">Why Retrieve k*2 First?</a></li>
+  <li><a href="#librarian-analogy" id="toc-librarian-analogy" class="nav-link" data-scroll-target="#librarian-analogy">Librarian Analogy</a></li>
+  <li><a href="#reference-implementation" id="toc-reference-implementation" class="nav-link" data-scroll-target="#reference-implementation">Reference Implementation</a></li>
+  </ul></li>
+  <li><a href="#code-implementation-details" id="toc-code-implementation-details" class="nav-link" data-scroll-target="#code-implementation-details">Code Implementation Details</a>
+  <ul class="collapse">
+  <li><a href="#the-function-signature" id="toc-the-function-signature" class="nav-link" data-scroll-target="#the-function-signature">The Function Signature</a></li>
+  <li><a href="#solr-query-parameters-explained" id="toc-solr-query-parameters-explained" class="nav-link" data-scroll-target="#solr-query-parameters-explained">Solr Query Parameters Explained</a></li>
+  <li><a href="#understanding-the-key-parameters" id="toc-understanding-the-key-parameters" class="nav-link" data-scroll-target="#understanding-the-key-parameters">Understanding the Key Parameters</a></li>
+  <li><a href="#how-rerankweight-works" id="toc-how-rerankweight-works" class="nav-link" data-scroll-target="#how-rerankweight-works">How reRankWeight Works</a></li>
+  </ul></li>
+  <li><a href="#choosing-the-right-reranking-strategy" id="toc-choosing-the-right-reranking-strategy" class="nav-link" data-scroll-target="#choosing-the-right-reranking-strategy">Choosing the Right Reranking Strategy</a>
+  <ul class="collapse">
+  <li><a href="#why-one-size-doesnt-fit-all" id="toc-why-one-size-doesnt-fit-all" class="nav-link" data-scroll-target="#why-one-size-doesnt-fit-all">Why One Size Doesn’t Fit All</a></li>
+  <li><a href="#strategy-1-exact-technical-queries-low-semantic-weight" id="toc-strategy-1-exact-technical-queries-low-semantic-weight" class="nav-link" data-scroll-target="#strategy-1-exact-technical-queries-low-semantic-weight">Strategy 1: Exact Technical Queries (Low Semantic Weight)</a></li>
+  <li><a href="#strategy-2-conceptual-queries-high-semantic-weight" id="toc-strategy-2-conceptual-queries-high-semantic-weight" class="nav-link" data-scroll-target="#strategy-2-conceptual-queries-high-semantic-weight">Strategy 2: Conceptual Queries (High Semantic Weight)</a></li>
+  <li><a href="#strategy-3-mixed-queries-balanced-weight" id="toc-strategy-3-mixed-queries-balanced-weight" class="nav-link" data-scroll-target="#strategy-3-mixed-queries-balanced-weight">Strategy 3: Mixed Queries (Balanced Weight)</a></li>
+  <li><a href="#decision-framework" id="toc-decision-framework" class="nav-link" data-scroll-target="#decision-framework">Decision Framework</a></li>
+  </ul></li>
+  <li><a href="#putting-it-all-together-a-practical-implementation-plan" id="toc-putting-it-all-together-a-practical-implementation-plan" class="nav-link" data-scroll-target="#putting-it-all-together-a-practical-implementation-plan">Putting It All Together: A Practical Implementation Plan</a>
+  <ul class="collapse">
+  <li><a href="#the-three-tier-classification-system" id="toc-the-three-tier-classification-system" class="nav-link" data-scroll-target="#the-three-tier-classification-system">The Three-Tier Classification System</a></li>
+  <li><a href="#how-classification-works" id="toc-how-classification-works" class="nav-link" data-scroll-target="#how-classification-works">How Classification Works</a></li>
+  <li><a href="#implementation-steps" id="toc-implementation-steps" class="nav-link" data-scroll-target="#implementation-steps">Implementation Steps</a></li>
+  <li><a href="#advantages-of-this-approach" id="toc-advantages-of-this-approach" class="nav-link" data-scroll-target="#advantages-of-this-approach">Advantages of This Approach</a></li>
+  <li><a href="#alternative-approaches-for-future-learning" id="toc-alternative-approaches-for-future-learning" class="nav-link" data-scroll-target="#alternative-approaches-for-future-learning">Alternative Approaches (For Future Learning)</a></li>
+  </ul></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
+  <li><a href="#next-learning-topics" id="toc-next-learning-topics" class="nav-link" data-scroll-target="#next-learning-topics">Next Learning Topics</a></li>
+  <li><a href="#reference-materials" id="toc-reference-materials" class="nav-link" data-scroll-target="#reference-materials">Reference Materials</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="hybrid-search-in-apache-solr---learning-notes" class="level1">
+<h1>Hybrid Search in Apache Solr - Learning Notes</h1>
+<section id="what-is-this-about" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-this-about">What is This About?</h2>
+<p>This post explores <strong>hybrid search</strong> and <strong>reranking</strong> in Apache Solr. If you’re new to these concepts:</p>
+<ul>
+<li><strong>Keyword search</strong> (also called lexical search) finds documents by matching exact words or phrases</li>
+<li><strong>Vector search</strong> (also called semantic search) finds documents by understanding meaning and similarity</li>
+<li><strong>Hybrid search</strong> combines both approaches to get the best of both worlds</li>
+<li><strong>Reranking</strong> is a technique where you first retrieve candidates using one method, then reorder them using another method</li>
+</ul>
+</section>
+<section id="why-reranking-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-reranking-matters">Why Reranking Matters</h2>
+<p>Imagine you’re searching for “how to fix memory leaks in Kubernetes”.</p>
+<ul>
+<li><strong>Keyword search alone</strong> might miss relevant docs that use different terminology (e.g., “memory management” instead of “memory leaks”)</li>
+<li><strong>Vector search alone</strong> might return semantically similar but irrelevant docs (e.g., general memory management articles)</li>
+<li><strong>Reranking</strong> lets you use keyword search to find relevant candidates, then use vector search to surface the most semantically relevant ones</li>
+</ul>
+</section>
+<section id="context-goal" class="level2">
+<h2 class="anchored" data-anchor-id="context-goal">Context &amp; Goal</h2>
+<ul>
+<li><strong>Background:</strong> Search practitioner, intermediate Python coder, familiar with lexical search in Solr</li>
+<li><strong>Goal:</strong> Understand hybrid search and re-ranking features in Solr</li>
+<li><strong>Application:</strong> Lightspeed core implementation for OpenShift documentation</li>
+</ul>
+</section>
+<section id="understanding-the-reranking-approach" class="level2">
+<h2 class="anchored" data-anchor-id="understanding-the-reranking-approach">Understanding the Reranking Approach</h2>
+<p>This implementation uses a <strong>keyword-first hybrid search</strong> strategy. Let’s break down what that means and how it works.</p>
+<section id="the-two-stage-process" class="level3">
+<h3 class="anchored" data-anchor-id="the-two-stage-process">The Two-Stage Process</h3>
+<p><strong>Stage 1: Keyword Retrieval (Broad Cast)</strong> - Use traditional keyword search to find candidate documents - Retrieve <code>k*2</code> documents (twice as many as you need) - This acts as a filter: only documents matching your keywords are considered</p>
+<p><strong>Stage 2: Semantic Reranking (Refinement)</strong> - Take those <code>k*2</code> candidates from Stage 1 - Use vector/semantic similarity to reorder them - Return the top <code>k</code> documents based on the combined score</p>
+</section>
+<section id="high-level-flow" class="level3">
+<h3 class="anchored" data-anchor-id="high-level-flow">High-Level Flow</h3>
+<pre><code>User Query: "how to deploy nodejs on openshift"
+    ↓
+Stage 1: Keyword Search
+    → Find top k*2 documents matching "deploy", "nodejs", "openshift"
+    → Example: Gets 20 documents (if k=10)
+    ↓
+Stage 2: Semantic Reranking  
+    → Calculate semantic similarity for those 20 documents
+    → Reorder by combining keyword score + semantic score
+    ↓
+Final Results: Top k documents (10 in this case)</code></pre>
+</section>
+<section id="why-retrieve-k2-first" class="level3">
+<h3 class="anchored" data-anchor-id="why-retrieve-k2-first">Why Retrieve k*2 First?</h3>
+<p>Retrieving <code>k*2</code> candidates gives the reranker a larger pool to work with. This is important because: - The keyword search might rank documents highly that aren’t semantically the best match - The reranker can “rescue” semantically relevant documents that ranked lower in keyword search - It’s a balance: too few candidates = missed opportunities, too many = slower performance</p>
+</section>
+<section id="librarian-analogy" class="level3">
+<h3 class="anchored" data-anchor-id="librarian-analogy">Librarian Analogy</h3>
+<p>Imagine you’re asking two librarians to help you find books:</p>
+<ul>
+<li><strong>Librarian #1 (Keyword Search):</strong>
+<ul>
+<li>You ask: “Find books about deploying applications”</li>
+<li>They search the catalog by keywords and bring you 20 books</li>
+<li>They put them on a table, roughly sorted by how many times “deploy” and “application” appear</li>
+</ul></li>
+<li><strong>Librarian #2 (Vector Reranker):</strong>
+<ul>
+<li>Takes those same 20 books from the table</li>
+<li>Reads through them to understand the actual content and meaning</li>
+<li>Reorders them based on how well they match what you’re really looking for</li>
+<li>Gives you the top 10 most relevant books</li>
+</ul></li>
+</ul>
+<p>The key insight: Librarian #2 can only work with what Librarian #1 found. If a book doesn’t match the keywords, it never makes it to the table.</p>
+</section>
+<section id="reference-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="reference-implementation">Reference Implementation</h3>
+<ul>
+<li>Lightspeed implementation: <a href="https://github.com/mwcz/lightspeed-providers/blob/anx/solr-provider-ls-0.2/lightspeed_stack_providers/providers/remote/solr_vector_io/solr_vector_io/src/solr_vector_io/solr.py#L386-L395">solr_vector_io/solr.py</a></li>
+</ul>
+</section>
+</section>
+<section id="code-implementation-details" class="level2">
+<h2 class="anchored" data-anchor-id="code-implementation-details">Code Implementation Details</h2>
+<p>Now let’s look at how this is actually implemented in code.</p>
+<section id="the-function-signature" class="level3">
+<h3 class="anchored" data-anchor-id="the-function-signature">The Function Signature</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> query_hybrid(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    embedding: NDArray,           <span class="co"># Query vector (converted from text to numbers)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    query_string: <span class="bu">str</span>,             <span class="co"># Original query text for keyword search</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    k: <span class="bu">int</span>,                        <span class="co"># Final number of results wanted</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    score_threshold: <span class="bu">float</span>,        <span class="co"># Minimum score to include a result</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    reranker_type: <span class="bu">str</span>,           <span class="co"># Type of reranking strategy</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    reranker_params: <span class="bu">dict</span>          <span class="co"># Contains boost values (reRankWeight, etc.)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Key inputs:</strong> - <code>embedding</code>: The query converted to a vector (array of numbers) that represents its meaning - <code>query_string</code>: The original text query for keyword matching - <code>k</code>: How many final results you want (e.g., 10) - <code>reranker_params</code>: Configuration like <code>reRankWeight</code> that controls how much semantic similarity matters</p>
+</section>
+<section id="solr-query-parameters-explained" class="level3">
+<h3 class="anchored" data-anchor-id="solr-query-parameters-explained">Solr Query Parameters Explained</h3>
+<p>Here’s what gets sent to Solr:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data_params <span class="op">=</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Stage 1: Initial keyword retrieval</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"q"</span>: query_string,                    <span class="co"># Your keyword query (e.g., "deploy nodejs")</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"defType"</span>: <span class="st">"edismax"</span>,                 <span class="co"># Extended DisMax parser (flexible keyword matching)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rows"</span>: k,                            <span class="co"># Final result count (but we'll rerank k*2 first)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Stage 2: Reranking configuration</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rq"</span>: <span class="st">"</span><span class="sc">{{</span><span class="st">!rerank reRankQuery=$rqq reRankDocs={k*2} reRankWeight=</span><span class="sc">{vector_boost}}}</span><span class="st">"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># rq = rerank query instruction</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># reRankQuery=$rqq = use the query defined in rqq parameter</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># reRankDocs={k*2} = rerank the top k*2 documents from keyword search</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># reRankWeight={vector_boost} = how much to weight semantic score vs keyword score</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rqq"</span>: <span class="st">"</span><span class="sc">{{</span><span class="st">!knn f=</span><span class="sc">{vector_field}</span><span class="st"> topK={k*2</span><span class="sc">}}</span><span class="st">}</span><span class="sc">{vector_str}</span><span class="st">"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># rqq = the actual rerank query (KNN = K-Nearest Neighbors, a vector similarity search)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># f={vector_field} = which field contains the document vectors</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># topK={k*2} = consider top k*2 candidates</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># {vector_str} = the query vector as a string</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Other parameters</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"fl"</span>: <span class="st">"*, score"</span>,                     <span class="co"># Return all fields + relevance score</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"fq"</span>: [<span class="st">"product:*openshift*"</span>],       <span class="co"># Filter query (only OpenShift docs)</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"wt"</span>: <span class="st">"json"</span>                          <span class="co"># Response format (JSON)</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="understanding-the-key-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-the-key-parameters">Understanding the Key Parameters</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 25%">
+<col style="width: 26%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>What It Does</th>
+<th>Example Value</th>
+<th>Why It Matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>q</code></td>
+<td>The keyword search query</td>
+<td><code>"deploy nodejs openshift"</code></td>
+<td>Finds initial candidates based on word matches</td>
+</tr>
+<tr class="even">
+<td><code>rq</code></td>
+<td>Rerank instruction</td>
+<td><code>"{!rerank ...}"</code></td>
+<td>Tells Solr to rerank results</td>
+</tr>
+<tr class="odd">
+<td><code>reRankDocs</code></td>
+<td>How many docs to rerank</td>
+<td><code>20</code> (if k=10)</td>
+<td>Larger pool = better reranking, but slower</td>
+</tr>
+<tr class="even">
+<td><code>reRankQuery</code></td>
+<td>What to use for reranking</td>
+<td><code>$rqq</code> (references rqq param)</td>
+<td>Points to the vector similarity query</td>
+</tr>
+<tr class="odd">
+<td><code>reRankWeight</code></td>
+<td>Semantic score importance</td>
+<td><code>5.0</code> (medium)</td>
+<td>Controls balance: low = keyword wins, high = semantic wins</td>
+</tr>
+<tr class="even">
+<td><code>rqq</code></td>
+<td>The vector similarity query</td>
+<td><code>"{!knn f=vector topK=20}..."</code></td>
+<td>Performs semantic search on candidates</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-rerankweight-works" class="level3">
+<h3 class="anchored" data-anchor-id="how-rerankweight-works">How reRankWeight Works</h3>
+<p>The <code>reRankWeight</code> parameter is crucial. It controls how the final score is calculated:</p>
+<pre><code>final_score = keyword_score + (reRankWeight × semantic_score)</code></pre>
+<p><strong>Examples:</strong> - <code>reRankWeight = 1</code>: Semantic score has equal weight to keyword score - <code>reRankWeight = 5</code>: Semantic score is 5× more important (balanced approach) - <code>reRankWeight = 20</code>: Semantic score dominates (for conceptual queries)</p>
+<p><strong>Why this matters:</strong> Different types of queries need different balances. A query like “CVE-2024-1234” needs exact keyword matching (low weight), while “how to improve security” benefits from semantic understanding (high weight).</p>
+</section>
+</section>
+<section id="choosing-the-right-reranking-strategy" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-the-right-reranking-strategy">Choosing the Right Reranking Strategy</h2>
+<p>One of the key insights from this implementation is that <strong>different query types need different reranking strategies</strong>. You can’t use the same <code>reRankWeight</code> for everything.</p>
+<section id="why-one-size-doesnt-fit-all" class="level3">
+<h3 class="anchored" data-anchor-id="why-one-size-doesnt-fit-all">Why One Size Doesn’t Fit All</h3>
+<p>Consider these three queries: 1. <code>"CVE-2024-1234"</code> - You want the exact security advisory 2. <code>"how to improve application performance"</code> - You want conceptually relevant guides 3. <code>"how to patch CVE-2024-1234"</code> - You need both the exact CVE and conceptual guidance</p>
+<p>Each needs a different balance between keyword matching and semantic understanding.</p>
+</section>
+<section id="strategy-1-exact-technical-queries-low-semantic-weight" class="level3">
+<h3 class="anchored" data-anchor-id="strategy-1-exact-technical-queries-low-semantic-weight">Strategy 1: Exact Technical Queries (Low Semantic Weight)</h3>
+<p><strong>When to use:</strong> Queries that require precise keyword matching</p>
+<p><strong>Examples:</strong> - <code>"CVE-2024-1234"</code> - Specific security advisory ID - <code>"error code 404"</code> - Exact error code - <code>"kubectl get pods"</code> - Specific command syntax - <code>"API endpoint /v1/users"</code> - Exact API path</p>
+<p><strong>Strategy:</strong> Low <code>reRankWeight</code> (1-2)</p>
+<p><strong>Why:</strong> - These queries have very specific, unambiguous intent - Exact keyword matches are more important than semantic similarity - You don’t want semantic search to “helpfully” return similar but different CVEs or error codes - The keyword search already finds the right documents; reranking should only make minor adjustments</p>
+<p><strong>Example scenario:</strong></p>
+<pre><code>Query: "CVE-2024-1234"
+Keyword search finds: Document about CVE-2024-1234 (score: 10.0)
+                      Document about CVE-2024-1235 (score: 8.0)  # Similar but wrong!
+                      
+With low reRankWeight (1.0):
+- CVE-2024-1234 stays on top (keyword score dominates)
+- CVE-2024-1235 stays lower (even if semantically similar)
+
+With high reRankWeight (20.0):
+- Risk: CVE-2024-1235 might jump ahead if it's semantically similar
+- Problem: User gets wrong CVE!</code></pre>
+</section>
+<section id="strategy-2-conceptual-queries-high-semantic-weight" class="level3">
+<h3 class="anchored" data-anchor-id="strategy-2-conceptual-queries-high-semantic-weight">Strategy 2: Conceptual Queries (High Semantic Weight)</h3>
+<p><strong>When to use:</strong> Queries about concepts, best practices, or “how-to” questions</p>
+<p><strong>Examples:</strong> - <code>"how to improve performance"</code> - Broad conceptual question - <code>"best practices for security"</code> - General guidance - <code>"troubleshooting slow deployments"</code> - Problem-solving query - <code>"scaling applications"</code> - Conceptual topic</p>
+<p><strong>Strategy:</strong> High <code>reRankWeight</code> (15-20)</p>
+<p><strong>Why:</strong> - These queries are about concepts, not exact terms - Users might use different words than the documentation - Semantic understanding helps find relevant content even if terminology differs - Keyword search might miss relevant docs that use synonyms or related terms</p>
+<p><strong>Example scenario:</strong></p>
+<pre><code>Query: "how to improve performance"
+Keyword search finds: Doc mentioning "improve performance" (score: 9.0)
+                      Doc about "optimization techniques" (score: 6.0)  # Relevant but different words!
+                      
+With low reRankWeight (1.0):
+- "improve performance" doc stays on top
+- "optimization techniques" stays lower (missed opportunity)
+
+With high reRankWeight (20.0):
+- "optimization techniques" jumps ahead (semantically very relevant)
+- User gets better results!</code></pre>
+</section>
+<section id="strategy-3-mixed-queries-balanced-weight" class="level3">
+<h3 class="anchored" data-anchor-id="strategy-3-mixed-queries-balanced-weight">Strategy 3: Mixed Queries (Balanced Weight)</h3>
+<p><strong>When to use:</strong> Queries that combine specific terms with conceptual needs</p>
+<p><strong>Examples:</strong> - <code>"how to patch CVE-2024-1234"</code> - Specific CVE + general patching guidance - <code>"deploy nodejs on kubernetes"</code> - Specific technologies + deployment concept - <code>"troubleshoot openshift authentication errors"</code> - Specific product + general troubleshooting - <code>"configure SSL for nginx"</code> - Specific tech + configuration concept</p>
+<p><strong>Strategy:</strong> Medium <code>reRankWeight</code> (5-8)</p>
+<p><strong>Why:</strong> - Need to match specific keywords (technology names, product names, error codes) - But also benefit from semantic understanding of the action/concept - Balance ensures specific terms are matched while still finding conceptually relevant content</p>
+<p><strong>Example scenario:</strong></p>
+<pre><code>Query: "deploy nodejs on kubernetes"
+Keyword search finds: "Deploying Node.js on Kubernetes" (score: 10.0)
+                      "Running Node.js apps in K8s" (score: 7.0)  # Different words, same concept
+                      
+With medium reRankWeight (6.0):
+- Both documents are considered
+- Exact match stays high, but semantic match can surface if very relevant
+- Good balance between precision and recall</code></pre>
+</section>
+<section id="decision-framework" class="level3">
+<h3 class="anchored" data-anchor-id="decision-framework">Decision Framework</h3>
+<p>When choosing <code>reRankWeight</code>, ask yourself:</p>
+<ol type="1">
+<li><strong>Is this query about a specific, unambiguous thing?</strong> (CVE, error code, exact command)
+<ul>
+<li>→ Use <strong>low weight (1-2)</strong></li>
+</ul></li>
+<li><strong>Is this query about a concept or general topic?</strong> (how-to, best practices, troubleshooting)
+<ul>
+<li>→ Use <strong>high weight (15-20)</strong></li>
+</ul></li>
+<li><strong>Does it combine specific terms with concepts?</strong> (specific tech + general action)
+<ul>
+<li>→ Use <strong>medium weight (5-8)</strong></li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="putting-it-all-together-a-practical-implementation-plan" class="level2">
+<h2 class="anchored" data-anchor-id="putting-it-all-together-a-practical-implementation-plan">Putting It All Together: A Practical Implementation Plan</h2>
+<p>Now that we understand the concepts, let’s see how to implement this in practice.</p>
+<section id="the-three-tier-classification-system" class="level3">
+<h3 class="anchored" data-anchor-id="the-three-tier-classification-system">The Three-Tier Classification System</h3>
+<p>Instead of trying to pick the perfect <code>reRankWeight</code> for every query, we can classify queries into three tiers:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 40%">
+<col style="width: 25%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tier</th>
+<th>Query Characteristics</th>
+<th>reRankWeight</th>
+<th>When to Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Exact Match Critical</strong></td>
+<td>Security IDs (CVE, Errata), error codes, exact commands</td>
+<td>1-2</td>
+<td>Queries that must match exact keywords</td>
+</tr>
+<tr class="even">
+<td><strong>Balanced</strong></td>
+<td>Technology + action combinations, mixed queries</td>
+<td>5-8</td>
+<td>Default for most queries (covers majority of cases)</td>
+</tr>
+<tr class="odd">
+<td><strong>Semantic Heavy</strong></td>
+<td>Questions, how-to guides, best practices, troubleshooting</td>
+<td>15-20</td>
+<td>Conceptual queries where meaning matters most</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-classification-works" class="level3">
+<h3 class="anchored" data-anchor-id="how-classification-works">How Classification Works</h3>
+<p><strong>Example Classification Logic:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_query(query: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Exact match critical: CVE, Errata, specific error codes</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> re.search(<span class="vs">r'CVE-</span><span class="dv">\d</span><span class="op">{4}</span><span class="vs">-</span><span class="dv">\d</span><span class="op">+</span><span class="vs">'</span>, query) <span class="kw">or</span> <span class="st">'errata'</span> <span class="kw">in</span> query.lower():</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"exact_match"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Semantic heavy: questions, how-to, best practices</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> query.lower().startswith((<span class="st">'how'</span>, <span class="st">'what'</span>, <span class="st">'why'</span>, <span class="st">'when'</span>)) <span class="kw">or</span> <span class="op">\</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">'best practice'</span> <span class="kw">in</span> query.lower() <span class="kw">or</span> <span class="st">'troubleshoot'</span> <span class="kw">in</span> query.lower():</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"semantic_heavy"</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Default: balanced</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"balanced"</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Map to reRankWeight</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>weight_map <span class="op">=</span> {</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"exact_match"</span>: <span class="fl">1.5</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"balanced"</span>: <span class="fl">6.0</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"semantic_heavy"</span>: <span class="fl">18.0</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="implementation-steps" class="level3">
+<h3 class="anchored" data-anchor-id="implementation-steps">Implementation Steps</h3>
+<ol type="1">
+<li><strong>Extend intent detection</strong> to classify queries into three tiers
+<ul>
+<li>Use pattern matching (regex, keywords)</li>
+<li>Leverage existing intent detection if available</li>
+<li>Start simple, refine based on data</li>
+</ul></li>
+<li><strong>Map each tier to reRankWeight value</strong>
+<ul>
+<li>Start with suggested ranges (1-2, 5-8, 15-20)</li>
+<li>Fine-tune based on your specific use case</li>
+</ul></li>
+<li><strong>Test on historical query logs</strong>
+<ul>
+<li>Run queries through both old and new systems</li>
+<li>Compare result quality (relevance, user satisfaction)</li>
+<li>Measure performance impact</li>
+</ul></li>
+<li><strong>Monitor and iterate</strong>
+<ul>
+<li>Track which queries get which classification</li>
+<li>Collect user feedback on result quality</li>
+<li>Adjust weights and classification rules based on data</li>
+</ul></li>
+</ol>
+</section>
+<section id="advantages-of-this-approach" class="level3">
+<h3 class="anchored" data-anchor-id="advantages-of-this-approach">Advantages of This Approach</h3>
+<ul>
+<li><strong>Practical starting point:</strong> Three tiers cover most use cases without being too complex</li>
+<li><strong>Data-driven refinement:</strong> Start with defaults, improve based on real queries</li>
+<li><strong>Explainable:</strong> Easy to understand why a query got a certain weight</li>
+<li><strong>Extensible:</strong> Can add more tiers or dynamic weights later</li>
+</ul>
+</section>
+<section id="alternative-approaches-for-future-learning" class="level3">
+<h3 class="anchored" data-anchor-id="alternative-approaches-for-future-learning">Alternative Approaches (For Future Learning)</h3>
+<p>This implementation uses <strong>keyword-first reranking</strong>, but there are other hybrid search strategies:</p>
+<ol type="1">
+<li><strong>Union-based:</strong> Run keyword and vector search separately, merge results</li>
+<li><strong>RRF (Reciprocal Rank Fusion):</strong> Combine rankings from multiple search methods</li>
+<li><strong>Learning to Rank (LTR):</strong> Use machine learning to automatically optimize weights</li>
+<li><strong>Dynamic weights:</strong> Adjust <code>reRankWeight</code> based on query features (length, term frequency, etc.)</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
+<ol type="1">
+<li><p><strong>Reranking is a two-stage process:</strong> Keyword search finds candidates, semantic search refines the ranking</p></li>
+<li><p><strong>reRankWeight controls the balance:</strong> It determines how much semantic similarity matters vs.&nbsp;keyword matching</p>
+<ul>
+<li>Low (1-2): Keyword matching dominates</li>
+<li>Medium (5-8): Balanced approach</li>
+<li>High (15-20): Semantic similarity dominates</li>
+</ul></li>
+<li><p><strong>Different query types need different strategies:</strong></p>
+<ul>
+<li>Exact technical queries → Low weight</li>
+<li>Conceptual queries → High weight<br>
+</li>
+<li>Mixed queries → Medium weight</li>
+</ul></li>
+<li><p><strong>Start simple, iterate based on data:</strong></p>
+<ul>
+<li>Three tiers is a practical starting point</li>
+<li>Refine weights and classification rules based on real query performance</li>
+</ul></li>
+<li><p><strong>This is keyword-first hybrid:</strong></p>
+<ul>
+<li>Only documents matching keywords are considered</li>
+<li>Reranking refines within that set</li>
+<li>This is different from union-based approaches that merge separate results</li>
+</ul></li>
+<li><p>**Why retrieve k*2 candidates?**</p>
+<ul>
+<li>Gives reranker a larger pool to work with</li>
+<li>Allows semantically relevant docs to “rescue” from lower keyword ranks</li>
+<li>Balance between quality and performance</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+<section id="next-learning-topics" class="level2">
+<h2 class="anchored" data-anchor-id="next-learning-topics">Next Learning Topics</h2>
+<ul>
+<li><strong>Experiment design:</strong> How to systematically test reranking strategies with query logs</li>
+<li><strong>Alternative hybrid approaches:</strong> Union-based search, RRF (Reciprocal Rank Fusion)</li>
+<li><strong>Dynamic reRankWeight:</strong> Adjusting weights based on query features automatically</li>
+<li><strong>Learning to Rank (LTR):</strong> Using machine learning to optimize reranking weights</li>
+<li><strong>Performance optimization:</strong> Balancing reranking quality with query latency</li>
+</ul>
+<hr>
+</section>
+<section id="reference-materials" class="level2">
+<h2 class="anchored" data-anchor-id="reference-materials">Reference Materials</h2>
+<ul>
+<li><strong>Sease.io blog:</strong> <a href="https://sease.io/2023/12/hybrid-search-with-apache-solr.html">Hybrid Search with Apache Solr</a> - Comprehensive guide to hybrid search concepts</li>
+<li><strong>Lightspeed implementation:</strong> <a href="https://github.com/mwcz/lightspeed-providers/blob/anx/solr-provider-ls-0.2/lightspeed_stack_providers/providers/remote/solr_vector_io/solr_vector_io/src/solr_vector_io/solr.py#L386-L395">solr_vector_io/solr.py</a> - Real-world code example</li>
+<li><strong>Solveit Dialog:</strong> <a href="https://share.solve.it.com/d/165a3e3f0cc54d5aae552edc4da15d78">Hybrid Search in Solr</a> - Interactive learning resource ```</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/manisnesan\.github\.io\/chrestotes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
