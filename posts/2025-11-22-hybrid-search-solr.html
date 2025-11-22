@@ -274,8 +274,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This implementation uses a <strong>keyword-first hybrid search</strong> strategy. Let’s break down what that means and how it works.</p>
 <section id="the-two-stage-process" class="level3">
 <h3 class="anchored" data-anchor-id="the-two-stage-process">The Two-Stage Process</h3>
-<p><strong>Stage 1: Keyword Retrieval (Broad Cast)</strong> - Use traditional keyword search to find candidate documents - Retrieve <code>k*2</code> documents (twice as many as you need) - This acts as a filter: only documents matching your keywords are considered</p>
-<p><strong>Stage 2: Semantic Reranking (Refinement)</strong> - Take those <code>k*2</code> candidates from Stage 1 - Use vector/semantic similarity to reorder them - Return the top <code>k</code> documents based on the combined score</p>
+<section id="stage-1-keyword-retrieval-broad-cast" class="level4">
+<h4 class="anchored" data-anchor-id="stage-1-keyword-retrieval-broad-cast">Stage 1: Keyword Retrieval (Broad Cast)</h4>
+<ul>
+<li>Use traditional keyword search to find candidate documents</li>
+<li>Retrieve <code>k*2</code> documents (twice as many as you need)</li>
+<li>This acts as a filter: only documents matching your keywords are considered</li>
+</ul>
+</section>
+<section id="stage-2-semantic-reranking-refinement" class="level4">
+<h4 class="anchored" data-anchor-id="stage-2-semantic-reranking-refinement">Stage 2: Semantic Reranking (Refinement)</h4>
+<ul>
+<li>Take those <code>k*2</code> candidates from Stage 1</li>
+<li>Use vector/semantic similarity to reorder them</li>
+<li>Return the top <code>k</code> documents based on the combined score</li>
+</ul>
+</section>
 </section>
 <section id="high-level-flow" class="level3">
 <h3 class="anchored" data-anchor-id="high-level-flow">High-Level Flow</h3>
@@ -293,7 +307,12 @@ Final Results: Top k documents (10 in this case)</code></pre>
 </section>
 <section id="why-retrieve-k2-first" class="level3">
 <h3 class="anchored" data-anchor-id="why-retrieve-k2-first">Why Retrieve k*2 First?</h3>
-<p>Retrieving <code>k*2</code> candidates gives the reranker a larger pool to work with. This is important because: - The keyword search might rank documents highly that aren’t semantically the best match - The reranker can “rescue” semantically relevant documents that ranked lower in keyword search - It’s a balance: too few candidates = missed opportunities, too many = slower performance</p>
+<p>Retrieving <code>k*2</code> candidates gives the reranker a larger pool to work with. This is important because:</p>
+<ul>
+<li>The keyword search might rank documents highly that aren’t semantically the best match</li>
+<li>The reranker can “rescue” semantically relevant documents that ranked lower in keyword search</li>
+<li>It’s a balance: too few candidates = missed opportunities, too many = slower performance</li>
+</ul>
 </section>
 <section id="librarian-analogy" class="level3">
 <h3 class="anchored" data-anchor-id="librarian-analogy">Librarian Analogy</h3>
@@ -335,7 +354,13 @@ Final Results: Top k documents (10 in this case)</code></pre>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    reranker_type: <span class="bu">str</span>,           <span class="co"># Type of reranking strategy</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    reranker_params: <span class="bu">dict</span>          <span class="co"># Contains boost values (reRankWeight, etc.)</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Key inputs:</strong> - <code>embedding</code>: The query converted to a vector (array of numbers) that represents its meaning - <code>query_string</code>: The original text query for keyword matching - <code>k</code>: How many final results you want (e.g., 10) - <code>reranker_params</code>: Configuration like <code>reRankWeight</code> that controls how much semantic similarity matters</p>
+<p><strong>Key inputs:</strong></p>
+<ul>
+<li><code>embedding</code>: The query converted to a vector (array of numbers) that represents its meaning</li>
+<li><code>query_string</code>: The original text query for keyword matching</li>
+<li><code>k</code>: How many final results you want (e.g., 10)</li>
+<li><code>reranker_params</code>: Configuration like <code>reRankWeight</code> that controls how much semantic similarity matters</li>
+</ul>
 </section>
 <section id="solr-query-parameters-explained" class="level3">
 <h3 class="anchored" data-anchor-id="solr-query-parameters-explained">Solr Query Parameters Explained</h3>
@@ -426,7 +451,12 @@ Final Results: Top k documents (10 in this case)</code></pre>
 <h3 class="anchored" data-anchor-id="how-rerankweight-works">How reRankWeight Works</h3>
 <p>The <code>reRankWeight</code> parameter is crucial. It controls how the final score is calculated:</p>
 <pre><code>final_score = keyword_score + (reRankWeight × semantic_score)</code></pre>
-<p><strong>Examples:</strong> - <code>reRankWeight = 1</code>: Semantic score has equal weight to keyword score - <code>reRankWeight = 5</code>: Semantic score is 5× more important (balanced approach) - <code>reRankWeight = 20</code>: Semantic score dominates (for conceptual queries)</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>reRankWeight = 1</code>: Semantic score has equal weight to keyword score</li>
+<li><code>reRankWeight = 5</code>: Semantic score is 5× more important (balanced approach)</li>
+<li><code>reRankWeight = 20</code>: Semantic score dominates (for conceptual queries)</li>
+</ul>
 <p><strong>Why this matters:</strong> Different types of queries need different balances. A query like “CVE-2024-1234” needs exact keyword matching (low weight), while “how to improve security” benefits from semantic understanding (high weight).</p>
 </section>
 </section>
@@ -443,7 +473,13 @@ Final Results: Top k documents (10 in this case)</code></pre>
 <p><strong>When to use:</strong> Queries that require precise keyword matching</p>
 <p><strong>Examples:</strong> - <code>"CVE-2024-1234"</code> - Specific security advisory ID - <code>"error code 404"</code> - Exact error code - <code>"kubectl get pods"</code> - Specific command syntax - <code>"API endpoint /v1/users"</code> - Exact API path</p>
 <p><strong>Strategy:</strong> Low <code>reRankWeight</code> (1-2)</p>
-<p><strong>Why:</strong> - These queries have very specific, unambiguous intent - Exact keyword matches are more important than semantic similarity - You don’t want semantic search to “helpfully” return similar but different CVEs or error codes - The keyword search already finds the right documents; reranking should only make minor adjustments</p>
+<p><strong>Why:</strong></p>
+<ul>
+<li>These queries have very specific, unambiguous intent</li>
+<li>Exact keyword matches are more important than semantic similarity</li>
+<li>You don’t want semantic search to “helpfully” return similar but different CVEs or error codes</li>
+<li>The keyword search already finds the right documents; reranking should only make minor adjustments</li>
+</ul>
 <p><strong>Example scenario:</strong></p>
 <pre><code>Query: "CVE-2024-1234"
 Keyword search finds: Document about CVE-2024-1234 (score: 10.0)
@@ -462,7 +498,13 @@ With high reRankWeight (20.0):
 <p><strong>When to use:</strong> Queries about concepts, best practices, or “how-to” questions</p>
 <p><strong>Examples:</strong> - <code>"how to improve performance"</code> - Broad conceptual question - <code>"best practices for security"</code> - General guidance - <code>"troubleshooting slow deployments"</code> - Problem-solving query - <code>"scaling applications"</code> - Conceptual topic</p>
 <p><strong>Strategy:</strong> High <code>reRankWeight</code> (15-20)</p>
-<p><strong>Why:</strong> - These queries are about concepts, not exact terms - Users might use different words than the documentation - Semantic understanding helps find relevant content even if terminology differs - Keyword search might miss relevant docs that use synonyms or related terms</p>
+<p><strong>Why:</strong></p>
+<ul>
+<li>These queries are about concepts, not exact terms</li>
+<li>Users might use different words than the documentation</li>
+<li>Semantic understanding helps find relevant content even if terminology differs</li>
+<li>Keyword search might miss relevant docs that use synonyms or related terms</li>
+</ul>
 <p><strong>Example scenario:</strong></p>
 <pre><code>Query: "how to improve performance"
 Keyword search finds: Doc mentioning "improve performance" (score: 9.0)
@@ -481,7 +523,12 @@ With high reRankWeight (20.0):
 <p><strong>When to use:</strong> Queries that combine specific terms with conceptual needs</p>
 <p><strong>Examples:</strong> - <code>"how to patch CVE-2024-1234"</code> - Specific CVE + general patching guidance - <code>"deploy nodejs on kubernetes"</code> - Specific technologies + deployment concept - <code>"troubleshoot openshift authentication errors"</code> - Specific product + general troubleshooting - <code>"configure SSL for nginx"</code> - Specific tech + configuration concept</p>
 <p><strong>Strategy:</strong> Medium <code>reRankWeight</code> (5-8)</p>
-<p><strong>Why:</strong> - Need to match specific keywords (technology names, product names, error codes) - But also benefit from semantic understanding of the action/concept - Balance ensures specific terms are matched while still finding conceptually relevant content</p>
+<p><strong>Why:</strong></p>
+<ul>
+<li>Need to match specific keywords (technology names, product names, error codes)</li>
+<li>But also benefit from semantic understanding of the action/concept</li>
+<li>Balance ensures specific terms are matched while still finding conceptually relevant content</li>
+</ul>
 <p><strong>Example scenario:</strong></p>
 <pre><code>Query: "deploy nodejs on kubernetes"
 Keyword search finds: "Deploying Node.js on Kubernetes" (score: 10.0)
