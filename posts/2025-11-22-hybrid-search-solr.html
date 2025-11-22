@@ -199,7 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#the-two-stage-process" id="toc-the-two-stage-process" class="nav-link" data-scroll-target="#the-two-stage-process">The Two-Stage Process</a></li>
   <li><a href="#high-level-flow" id="toc-high-level-flow" class="nav-link" data-scroll-target="#high-level-flow">High-Level Flow</a></li>
-  <li><a href="#why-retrieve-k2-first" id="toc-why-retrieve-k2-first" class="nav-link" data-scroll-target="#why-retrieve-k2-first">Why Retrieve k*2 First?</a></li>
+  <li><a href="#why-retrieve-k2-first" id="toc-why-retrieve-k2-first" class="nav-link" data-scroll-target="#why-retrieve-k2-first">Why Retrieve <code>k*2</code> First?</a></li>
   <li><a href="#librarian-analogy" id="toc-librarian-analogy" class="nav-link" data-scroll-target="#librarian-analogy">Librarian Analogy</a></li>
   <li><a href="#reference-implementation" id="toc-reference-implementation" class="nav-link" data-scroll-target="#reference-implementation">Reference Implementation</a></li>
   </ul></li>
@@ -254,12 +254,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="why-reranking-matters" class="level2">
 <h2 class="anchored" data-anchor-id="why-reranking-matters">Why Reranking Matters</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The Problem with Single-Method Search
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Imagine you’re searching for “how to fix memory leaks in Kubernetes”.</p>
 <ul>
 <li><strong>Keyword search alone</strong> might miss relevant docs that use different terminology (e.g., “memory management” instead of “memory leaks”)</li>
 <li><strong>Vector search alone</strong> might return semantically similar but irrelevant docs (e.g., general memory management articles)</li>
 <li><strong>Reranking</strong> lets you use keyword search to find relevant candidates, then use vector search to surface the most semantically relevant ones</li>
 </ul>
+</div>
+</div>
 </section>
 <section id="context-goal" class="level2">
 <h2 class="anchored" data-anchor-id="context-goal">Context &amp; Goal</h2>
@@ -306,13 +318,25 @@ Stage 2: Semantic Reranking
 Final Results: Top k documents (10 in this case)</code></pre>
 </section>
 <section id="why-retrieve-k2-first" class="level3">
-<h3 class="anchored" data-anchor-id="why-retrieve-k2-first">Why Retrieve k*2 First?</h3>
+<h3 class="anchored" data-anchor-id="why-retrieve-k2-first">Why Retrieve <code>k*2</code> First?</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>The k×2 Strategy
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Retrieving <code>k*2</code> candidates gives the reranker a larger pool to work with. This is important because:</p>
 <ul>
 <li>The keyword search might rank documents highly that aren’t semantically the best match</li>
 <li>The reranker can “rescue” semantically relevant documents that ranked lower in keyword search</li>
 <li>It’s a balance: too few candidates = missed opportunities, too many = slower performance</li>
 </ul>
+</div>
+</div>
 </section>
 <section id="librarian-analogy" class="level3">
 <h3 class="anchored" data-anchor-id="librarian-analogy">Librarian Analogy</h3>
@@ -450,7 +474,19 @@ Final Results: Top k documents (10 in this case)</code></pre>
 <section id="how-rerankweight-works" class="level3">
 <h3 class="anchored" data-anchor-id="how-rerankweight-works">How reRankWeight Works</h3>
 <p>The <code>reRankWeight</code> parameter is crucial. It controls how the final score is calculated:</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Score Formula
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <pre><code>final_score = keyword_score + (reRankWeight × semantic_score)</code></pre>
+</div>
+</div>
 <p><strong>Examples:</strong></p>
 <ul>
 <li><code>reRankWeight = 1</code>: Semantic score has equal weight to keyword score</li>
@@ -465,13 +501,72 @@ Final Results: Top k documents (10 in this case)</code></pre>
 <p>One of the key insights from this implementation is that <strong>different query types need different reranking strategies</strong>. You can’t use the same <code>reRankWeight</code> for everything.</p>
 <section id="why-one-size-doesnt-fit-all" class="level3">
 <h3 class="anchored" data-anchor-id="why-one-size-doesnt-fit-all">Why One Size Doesn’t Fit All</h3>
-<p>Consider these three queries: 1. <code>"CVE-2024-1234"</code> - You want the exact security advisory 2. <code>"how to improve application performance"</code> - You want conceptually relevant guides 3. <code>"how to patch CVE-2024-1234"</code> - You need both the exact CVE and conceptual guidance</p>
+<p>Consider these three queries:</p>
+<ol type="1">
+<li><code>"CVE-2024-1234"</code> - You want the exact security advisory</li>
+<li><code>"how to improve application performance"</code> - You want conceptually relevant guides</li>
+<li><code>"how to patch CVE-2024-1234"</code> - You need both the exact CVE and conceptual guidance</li>
+</ol>
 <p>Each needs a different balance between keyword matching and semantic understanding.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Quick Strategy Reference
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 27%">
+<col style="width: 19%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>reRankWeight</th>
+<th>Best For</th>
+<th>Example Queries</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Exact Match</strong></td>
+<td>1-2</td>
+<td>Specific IDs, codes, commands</td>
+<td><code>"CVE-2024-1234"</code>, <code>"error 404"</code></td>
+</tr>
+<tr class="even">
+<td><strong>Balanced</strong></td>
+<td>5-8</td>
+<td>Tech + action combinations</td>
+<td><code>"deploy nodejs on k8s"</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Semantic Heavy</strong></td>
+<td>15-20</td>
+<td>Concepts, how-to, best practices</td>
+<td><code>"how to improve performance"</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
 <section id="strategy-1-exact-technical-queries-low-semantic-weight" class="level3">
 <h3 class="anchored" data-anchor-id="strategy-1-exact-technical-queries-low-semantic-weight">Strategy 1: Exact Technical Queries (Low Semantic Weight)</h3>
 <p><strong>When to use:</strong> Queries that require precise keyword matching</p>
-<p><strong>Examples:</strong> - <code>"CVE-2024-1234"</code> - Specific security advisory ID - <code>"error code 404"</code> - Exact error code - <code>"kubectl get pods"</code> - Specific command syntax - <code>"API endpoint /v1/users"</code> - Exact API path</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>"CVE-2024-1234"</code> - Specific security advisory ID</li>
+<li><code>"error code 404"</code> - Exact error code</li>
+<li><code>"kubectl get pods"</code> - Specific command syntax</li>
+<li><code>"API endpoint /v1/users"</code> - Exact API path</li>
+</ul>
 <p><strong>Strategy:</strong> Low <code>reRankWeight</code> (1-2)</p>
 <p><strong>Why:</strong></p>
 <ul>
@@ -496,7 +591,13 @@ With high reRankWeight (20.0):
 <section id="strategy-2-conceptual-queries-high-semantic-weight" class="level3">
 <h3 class="anchored" data-anchor-id="strategy-2-conceptual-queries-high-semantic-weight">Strategy 2: Conceptual Queries (High Semantic Weight)</h3>
 <p><strong>When to use:</strong> Queries about concepts, best practices, or “how-to” questions</p>
-<p><strong>Examples:</strong> - <code>"how to improve performance"</code> - Broad conceptual question - <code>"best practices for security"</code> - General guidance - <code>"troubleshooting slow deployments"</code> - Problem-solving query - <code>"scaling applications"</code> - Conceptual topic</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>"how to improve performance"</code> - Broad conceptual question</li>
+<li><code>"best practices for security"</code> - General guidance</li>
+<li><code>"troubleshooting slow deployments"</code> - Problem-solving query</li>
+<li><code>"scaling applications"</code> - Conceptual topic</li>
+</ul>
 <p><strong>Strategy:</strong> High <code>reRankWeight</code> (15-20)</p>
 <p><strong>Why:</strong></p>
 <ul>
@@ -521,7 +622,13 @@ With high reRankWeight (20.0):
 <section id="strategy-3-mixed-queries-balanced-weight" class="level3">
 <h3 class="anchored" data-anchor-id="strategy-3-mixed-queries-balanced-weight">Strategy 3: Mixed Queries (Balanced Weight)</h3>
 <p><strong>When to use:</strong> Queries that combine specific terms with conceptual needs</p>
-<p><strong>Examples:</strong> - <code>"how to patch CVE-2024-1234"</code> - Specific CVE + general patching guidance - <code>"deploy nodejs on kubernetes"</code> - Specific technologies + deployment concept - <code>"troubleshoot openshift authentication errors"</code> - Specific product + general troubleshooting - <code>"configure SSL for nginx"</code> - Specific tech + configuration concept</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>"how to patch CVE-2024-1234"</code> - Specific CVE + general patching guidance</li>
+<li><code>"deploy nodejs on kubernetes"</code> - Specific technologies + deployment concept</li>
+<li><code>"troubleshoot openshift authentication errors"</code> - Specific product + general troubleshooting</li>
+<li><code>"configure SSL for nginx"</code> - Specific tech + configuration concept</li>
+</ul>
 <p><strong>Strategy:</strong> Medium <code>reRankWeight</code> (5-8)</p>
 <p><strong>Why:</strong></p>
 <ul>
@@ -541,6 +648,16 @@ With medium reRankWeight (6.0):
 </section>
 <section id="decision-framework" class="level3">
 <h3 class="anchored" data-anchor-id="decision-framework">Decision Framework</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Quick Reference: Choosing reRankWeight
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>When choosing <code>reRankWeight</code>, ask yourself:</p>
 <ol type="1">
 <li><strong>Is this query about a specific, unambiguous thing?</strong> (CVE, error code, exact command)
@@ -556,6 +673,8 @@ With medium reRankWeight (6.0):
 <li>→ Use <strong>medium weight (5-8)</strong></li>
 </ul></li>
 </ol>
+</div>
+</div>
 </section>
 </section>
 <section id="putting-it-all-together-a-practical-implementation-plan" class="level2">
@@ -654,12 +773,24 @@ With medium reRankWeight (6.0):
 </section>
 <section id="advantages-of-this-approach" class="level3">
 <h3 class="anchored" data-anchor-id="advantages-of-this-approach">Advantages of This Approach</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Why Three Tiers Work
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
 <li><strong>Practical starting point:</strong> Three tiers cover most use cases without being too complex</li>
 <li><strong>Data-driven refinement:</strong> Start with defaults, improve based on real queries</li>
 <li><strong>Explainable:</strong> Easy to understand why a query got a certain weight</li>
 <li><strong>Extensible:</strong> Can add more tiers or dynamic weights later</li>
 </ul>
+</div>
+</div>
 </section>
 <section id="alternative-approaches-for-future-learning" class="level3">
 <h3 class="anchored" data-anchor-id="alternative-approaches-for-future-learning">Alternative Approaches (For Future Learning)</h3>
@@ -675,6 +806,16 @@ With medium reRankWeight (6.0):
 </section>
 <section id="key-takeaways" class="level2">
 <h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Core Concepts
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
 <li><p><strong>Reranking is a two-stage process:</strong> Keyword search finds candidates, semantic search refines the ranking</p></li>
 <li><p><strong>reRankWeight controls the balance:</strong> It determines how much semantic similarity matters vs.&nbsp;keyword matching</p>
@@ -701,13 +842,15 @@ With medium reRankWeight (6.0):
 <li>Reranking refines within that set</li>
 <li>This is different from union-based approaches that merge separate results</li>
 </ul></li>
-<li><p>**Why retrieve k*2 candidates?**</p>
+<li><p><strong>Why retrieve <code>k*2</code> candidates?</strong></p>
 <ul>
 <li>Gives reranker a larger pool to work with</li>
 <li>Allows semantically relevant docs to “rescue” from lower keyword ranks</li>
 <li>Balance between quality and performance</li>
 </ul></li>
 </ol>
+</div>
+</div>
 <hr>
 </section>
 <section id="next-learning-topics" class="level2">
