@@ -15,3 +15,5 @@ __pycache__
 /.quarto/
 _site/
 .*
+# Exception: track .cursorrules for Cursor IDE
+!.cursorrules

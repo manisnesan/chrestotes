@@ -1,0 +1,112 @@
+# Cursor Rules for Chrestotes Blog
+
+## Critical: Editing .ipynb Files
+
+**ALWAYS use `edit_notebook` tool for Jupyter notebook files (`.ipynb`), NEVER use `search_replace` or `write`.**
+
+- Notebooks are JSON files requiring special handling
+- Specify correct `cell_language` (markdown, python, etc.)
+- Use `is_new_cell: true` for new cells, `false` for editing
+- Provide sufficient context in `old_string` to uniquely identify cells
+
+## Quarto Markdown Formatting (Strict Requirements)
+
+This project uses Quarto for rendering. Quarto requires strict Markdown formatting:
+
+### Spacing Rules
+- **Always add blank lines** between block elements (headings, paragraphs, lists)
+- After headings: add blank line before next content
+- After paragraphs ending with `:`: add blank line before lists
+- After bold text: add blank line before lists or other content
+
+### Heading Best Practices
+- Use proper Markdown headings (`##`, `###`, `####`) NOT bold text (`**text**`) for section headings
+- Example: Use `#### Stage 1: Title` instead of `**Stage 1: Title**`
+
+### List Formatting
+- Blank lines before and after lists
+- Consistent indentation (2 spaces per level)
+- Don't mix list types without blank lines
+
+### Code Blocks
+- Use triple backticks with language: ` ```python `, ` ```markdown `
+- Blank lines before and after code blocks
+
+## Project Context
+
+- **Primary publishing:** Quarto (`quarto publish gh-pages`)
+- **Post location:** `posts/` directory (not `_posts/` or `_notebooks/`)
+- **Naming:** `YYYY-MM-DD-title.ipynb` format
+- **Front matter:** YAML in first cell (cell 0) of notebooks
+- **Dependencies:** Use `uv pip install <package>`
+
+## Notebook Structure
+
+### Front Matter (Cell 0)
+First cell must be markdown with YAML front matter:
+```yaml
+---
+title: "Your Post Title"
+date: "YYYY-MM-DD"
+categories:
+  - category1
+  - category2
+description: "Brief description"
+toc: true
+---
+```
+
+### Cell Organization
+1. Cell 0: Markdown with YAML front matter
+2. Subsequent cells: Mix of markdown and code
+3. Markdown cells: Explanations, headings, narrative
+4. Code cells: Executable code, examples
+
+## Common Fixes
+
+- Lists not rendering → Add blank lines before/after
+- Headings not displaying → Use proper `##` headings, not `**bold**`
+- Paragraphs/lists running together → Add blank line between them
+- Code blocks not rendering → Ensure blank lines before/after
+
+## Publishing Commands
+
+### Primary (Quarto)
+```bash
+quarto publish gh-pages --no-browser
+```
+
+### Local Preview
+```bash
+quarto preview
+```
+
+### Legacy Jekyll (Docker)
+```bash
+make server          # Start Jekyll server
+make convert         # Convert notebooks/Word docs
+make stop            # Stop containers
+```
+
+## Content Processing
+
+**Current (Quarto):**
+`posts/*.{ipynb,md,qmd} → quarto render → _site/ → gh-pages`
+
+**Legacy (fastpages):**
+`_notebooks/*.ipynb → nb2post.py → _posts/*.md → Jekyll`
+
+## Testing
+
+After editing notebooks:
+1. Run `quarto preview` to check rendering
+2. Verify spacing and formatting
+3. Check that lists, headings, code blocks display correctly
+
+## Site Info
+
+- **URL:** https://manisnesan.github.io/chrestotes/
+- **Base URL:** /chrestotes
+- **Theme:** Cosmo (Quarto)
+- **Math:** KaTeX
+- **Syntax Highlighting:** Dracula theme
