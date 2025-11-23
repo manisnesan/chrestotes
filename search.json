@@ -102,7 +102,28 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "I am Manikandan Sivanesan, currently working as a Principal Software Engineer @ Red Hat on Search Relevance, Language Understanding and Ranking. I’m currently learning Deep Learning as a fast.ai international fellow.\nThis blog is a medium to teach the past version of myself and serve as a documentation to my future self about things that I’m curious about at a given point in time."
+    "text": "Welcome! I’m Manikandan Sivanesan, and this is my learning blog where I document my journey exploring search systems and agentic AI.\nThis blog serves as a medium to teach my past self and document discoveries for my future self about things I’m curious about. I write about information retrieval, search systems (particularly Apache Solr), NLP, and machine learning topics."
+  },
+  {
+    "objectID": "about.html#current-work",
+    "href": "about.html#current-work",
+    "title": "About",
+    "section": "Current Work",
+    "text": "Current Work\n🔭 AI Technical Strategy Lead | Senior Principal Software Engineer @ Red Hat\nFocus Areas: Agentic AI, Retrieval Augmented Generation (RAG), Reranking, Hybrid Search\nAdditional Links:\n\nfastai forum\nHugging Face Space"
+  },
+  {
+    "objectID": "about.html#talks",
+    "href": "about.html#talks",
+    "title": "About",
+    "section": "Talks",
+    "text": "Talks\n2020\n\nUsing Intent Data to Optimize the Self-Solve Experience | YouTube\nActivate, Virtual Search & AI Conference\nHow Red Hat uses intent data to automate and improve workflow efficiency for support personnel and contact centers.\n\n2018\n\nEmpowering Customers to Self Solve: A Findability Journey\nActivate 2018\nEvolution of different search techniques in our Solution Engine and the customers’ search journey."
+  },
+  {
+    "objectID": "about.html#papers",
+    "href": "about.html#papers",
+    "title": "About",
+    "section": "Papers",
+    "text": "Papers\n2020\n\nHate Speech and Offensive Content Identification in Indo-European Languages\nHASOC 2020 conference\nAbstract: This article describes our team Chrestotes’ approach to the solution submitted to HASOC 2020: Hate Speech and Offensive Content Identification in Indo-European Languages. We demonstrate an end to end solution to the fine-grained detection of hate speech in tweets. Our solution is focused on the English Task which has been split into two subtasks. Our model achieved macro-average f1-scores of 0.4969 and 0.2652 on the subtasks A and B respectively. This solution places us in the middle of the leaderboard for subtask A and first place for subtask B.\n\n\nCertifications\n2025\n\nElite AI Assisted Coding - Maven (Oct 2025)\nSkills: AI assisted Development, Software Development\nAI Evals For Engineers & PMs - Maven (May 2025)\nSolve It With Code - fast.ai / Answer.ai (Feb 2025)\nInstructors: Jeremy Howard, Johno Whitaker\nHands-on course on solving real-world problems using AI-assisted development. Focused on iterative coding practices, breaking down complexity, and building functional, maintainable software.\nCourse Link\n\n2024\n\nSystematically Improving RAG Applications - Maven (Aug 2024)\nMastering LLMs: A Conference For Developers & Data Scientists - Maven (Jun 2024)\n\n2022\n\nInternational Fellowship - fast.ai Deep Learning for Coders course (2022)\nSearch with Machine Learning - Co:rise (Mar 2022)\n\n2021\n\nFull Stack Deep Learning - Spring 2021\nfastclean : Experiments to find incorrect labels in the dataset and noisy training\n\n2020\n\nInternational Fellowship - fast.ai Deep Learning for Coders course (2020)\n\n2016\n\nMachine Learning Foundations: A Case Study Approach - Coursera (Jan 2016)\n\n2015\n\nCloud Computing Applications - Coursera (Oct 2015)\n\n2014\n\nFunctional Programming Principles in Scale - Coursera (Jun 2014)"
   },
   {
     "objectID": "posts/2020-06-29-tracking-data-model-using-dvc.html",
