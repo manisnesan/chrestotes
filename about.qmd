@@ -2,20 +2,118 @@
 title: "About"
 image: profile.jpg
 about:
-  template: jolla
+  template: trestles
+  image-width: 200px
+  image-shape: round
   links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/manisnesan
+    - icon: github
+      text: GitHub
+      href: https://github.com/manisnesan
     - icon: linkedin
       text: LinkedIn
       href: https://www.linkedin.com/in/manisnesan
-    - icon: github
-      text: Github
-      href: https://github.com/manisnesan
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/manisnesan
+    - icon: link
+      text: Blog
+      href: https://manisnesan.github.io/chrestotes/
+    - icon: link
+      text: Hugging Face
+      href: https://huggingface.co/msivanes
+---
+
+### Hi there 👋
+
+Welcome! I'm **Manikandan Sivanesan**, and this is my learning blog where I document my journey exploring search systems and agentic AI.
+
+This blog serves as a medium to teach my past self and document discoveries for my future self about things I'm curious about. I write about information retrieval, search systems (particularly Apache Solr), NLP, and machine learning topics.
 
 ---
 
-I am Manikandan Sivanesan, currently working as a Principal Software Engineer @ Red Hat on Search Relevance, Language Understanding and Ranking. I’m currently learning Deep Learning as a fast.ai international fellow.
+## Current Work
 
-This blog is a medium to teach the past version of myself and serve as a documentation to my future self about things that I'm curious about at a given point in time.  
+🔭 **AI Technical Strategy Lead | Senior Principal Software Engineer** @ Red Hat
+
+**Focus Areas:** Agentic AI, Retrieval Augmented Generation (RAG), Reranking, Hybrid Search
+
+
+**Additional Links:**
+
+- [fastai forum](https://forums.fast.ai/u/msivanes/summary)
+- [Hugging Face Space](https://huggingface.co/msivanes)
+
+---
+
+## Talks
+
+**2020**
+
+- **[Using Intent Data to Optimize the Self-Solve Experience](https://lucidworks.com/post/red-hat-self-service-customer-support-solution/)** | [YouTube](https://youtu.be/4pjt16CeT6I?si=RYTCDe_qlwSh09nA)  
+  *Activate, Virtual Search & AI Conference*  
+  How Red Hat uses intent data to automate and improve workflow efficiency for support personnel and contact centers.
+
+**2018**
+
+- **[Empowering Customers to Self Solve: A Findability Journey](https://www.youtube.com/watch?v=HhXPl4QP2w0)**  
+  *Activate 2018*  
+  Evolution of different search techniques in our Solution Engine and the customers' search journey.
+
+---
+
+## Papers
+
+**2020**
+
+- **[Hate Speech and Offensive Content Identification in Indo-European Languages](http://ceur-ws.org/Vol-2826/T2-10.pdf)**  
+  *[HASOC 2020 conference](https://hasocfire.github.io/hasoc/2020/)*
+
+  **Abstract:** This article describes our team Chrestotes' approach to the solution submitted to HASOC 2020: Hate Speech and Offensive Content Identification in Indo-European Languages. We demonstrate an end to end solution to the fine-grained detection of hate speech in tweets. Our solution is focused on the English Task which has been split into two subtasks. Our model achieved macro-average f1-scores of 0.4969 and 0.2652 on the subtasks A and B respectively. This solution places us in the middle of the leaderboard for subtask A and first place for subtask B.
+
+### Certifications
+
+**2025**
+
+- **Elite AI Assisted Coding** - Maven (Oct 2025)  
+  Skills: AI assisted Development, Software Development
+
+- **AI Evals For Engineers & PMs** - Maven (May 2025)
+
+- **Solve It With Code** - fast.ai / Answer.ai (Feb 2025)  
+  Instructors: Jeremy Howard, Johno Whitaker  
+  Hands-on course on solving real-world problems using AI-assisted development. Focused on iterative coding practices, breaking down complexity, and building functional, maintainable software.  
+  [Course Link](http://solveit.fast.ai)
+
+**2024**
+
+- **Systematically Improving RAG Applications** - Maven (Aug 2024)
+
+- **Mastering LLMs: A Conference For Developers & Data Scientists** - Maven (Jun 2024)
+
+**2022**
+
+- **International Fellowship** - fast.ai Deep Learning for Coders course (2022)
+
+- **Search with Machine Learning** - Co:rise (Mar 2022)
+
+**2021**
+
+- **Full Stack Deep Learning** - Spring 2021  
+  [fastclean](https://manisnesan.github.io/fastclean/) : Experiments to find incorrect labels in the dataset and noisy training
+
+**2020**
+
+- **International Fellowship** - fast.ai Deep Learning for Coders course (2020)
+
+**2016**
+
+- **Machine Learning Foundations: A Case Study Approach** - Coursera (Jan 2016)
+
+**2015**
+
+- **Cloud Computing Applications** - Coursera (Oct 2015)
+
+**2014**
+
+- **Functional Programming Principles in Scale** - Coursera (Jun 2014)
+
