@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/2025-11-27-stop-operating-blind.html",
       "/posts/2025-11-22-hybrid-search-solr.html",
       "/posts/2023-07-07-doc-expansion-by-query-pred.html",
       "/posts/2023-04-14-fashion-mnist.html",
