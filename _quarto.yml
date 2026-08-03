@@ -1,5 +1,14 @@
 project:
   type: website
+  render:
+    - "*.qmd"
+    - "*.md"
+    - "posts/*.ipynb"
+    - "posts/*.md"
+    - "posts/*.qmd"
+    - "drafts/*.ipynb"
+    - "drafts/**/*.qmd"
+    - "!posts/2025-11-22-hybrid-search-solr.md"
 
 website:
   title: "chrestotes"
