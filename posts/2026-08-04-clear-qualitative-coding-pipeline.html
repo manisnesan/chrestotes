@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-08-02">
-<meta name="description" content="Ninety days on silent agent failures: detection before the fix path, and why intake can scale before closure does.">
+<meta name="dcterms.date" content="2026-08-04">
+<meta name="description" content="Close-read notes: CLEAR maps onto open coding + KPA; Agentic CLEAR adds node/trace/rubric; a fixed taxonomy still blinds you.">
 
-<title>There Is No Sound: Detection Before Remediation in Agentic Workflows – chrestotes</title>
+<title>CLEAR is my qualitative coding pipeline: notes from a close read – chrestotes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -117,17 +117,16 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">There Is No Sound: Detection Before Remediation in Agentic Workflows</h1>
+      <h1 class="title">CLEAR is my qualitative coding pipeline: notes from a close read</h1>
                   <div>
         <div class="description">
-          Ninety days on silent agent failures: detection before the fix path, and why intake can scale before closure does.
+          Close-read notes: CLEAR maps onto open coding + KPA; Agentic CLEAR adds node/trace/rubric; a fixed taxonomy still blinds you.
         </div>
       </div>
                           <div class="quarto-categories">
                 <div class="quarto-category">AI</div>
                 <div class="quarto-category">AI Evals</div>
-                <div class="quarto-category">agentic-workflows</div>
-                <div class="quarto-category">product-management</div>
+                <div class="quarto-category">LLM-as-a-Judge</div>
               </div>
                   </div>
   </div>
@@ -139,7 +138,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">August 2, 2026</p>
+        <p class="date">August 4, 2026</p>
       </div>
     </div>
     
@@ -155,16 +154,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#there-is-no-sound" id="toc-there-is-no-sound" class="nav-link active" data-scroll-target="#there-is-no-sound">There is no sound</a></li>
-  <li><a href="#what-we-were-handed-vs-what-we-learned" id="toc-what-we-were-handed-vs-what-we-learned" class="nav-link" data-scroll-target="#what-we-were-handed-vs-what-we-learned">What we were handed vs what we learned</a></li>
-  <li><a href="#problem-understanding-first-30-days" id="toc-problem-understanding-first-30-days" class="nav-link" data-scroll-target="#problem-understanding-first-30-days">Problem understanding: first 30 days</a></li>
-  <li><a href="#the-feasibility-trap" id="toc-the-feasibility-trap" class="nav-link" data-scroll-target="#the-feasibility-trap">The feasibility trap</a></li>
-  <li><a href="#sixty-days-proving-the-stages" id="toc-sixty-days-proving-the-stages" class="nav-link" data-scroll-target="#sixty-days-proving-the-stages">Sixty days: proving the stages</a></li>
-  <li><a href="#ninety-days-intake-is-not-the-whole-loop" id="toc-ninety-days-intake-is-not-the-whole-loop" class="nav-link" data-scroll-target="#ninety-days-intake-is-not-the-whole-loop">Ninety days: intake is not the whole loop</a></li>
-  <li><a href="#fix-faster-or-earn-trust-first-you-need-both" id="toc-fix-faster-or-earn-trust-first-you-need-both" class="nav-link" data-scroll-target="#fix-faster-or-earn-trust-first-you-need-both">Fix faster, or earn trust first: you need both</a></li>
-  <li><a href="#the-job-shifted-from-building-to-framing" id="toc-the-job-shifted-from-building-to-framing" class="nav-link" data-scroll-target="#the-job-shifted-from-building-to-framing">The job shifted from building to framing</a></li>
-  <li><a href="#what-i-would-do-next" id="toc-what-i-would-do-next" class="nav-link" data-scroll-target="#what-i-would-do-next">What I would do next</a></li>
-  <li><a href="#reflection" id="toc-reflection" class="nav-link" data-scroll-target="#reflection">Reflection</a></li>
+  <li><a href="#clear-is-my-qualitative-coding-pipeline-notes-from-a-close-read" id="toc-clear-is-my-qualitative-coding-pipeline-notes-from-a-close-read" class="nav-link active" data-scroll-target="#clear-is-my-qualitative-coding-pipeline-notes-from-a-close-read">CLEAR is my qualitative coding pipeline: notes from a close read</a>
+  <ul class="collapse">
+  <li><a href="#open-coding-automated" id="toc-open-coding-automated" class="nav-link" data-scroll-target="#open-coding-automated">Open coding, automated</a></li>
+  <li><a href="#node-trace-rubric" id="toc-node-trace-rubric" class="nav-link" data-scroll-target="#node-trace-rubric">Node, trace, rubric</a></li>
+  <li><a href="#what-a-fixed-taxonomy-cant-do" id="toc-what-a-fixed-taxonomy-cant-do" class="nav-link" data-scroll-target="#what-a-fixed-taxonomy-cant-do">What a fixed taxonomy can’t do</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -175,171 +170,38 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="there-is-no-sound" class="level2">
-<h2 class="anchored" data-anchor-id="there-is-no-sound">There is no sound</h2>
-<p>Traditional software fails loudly. Exceptions land in logs. Alerts fire. Someone opens a ticket.</p>
-<p>Agentic workflows often fail without that noise. The model answers. The tool call looks fine. The session ends. No stack trace. No alerts. Users leave. Trust goes with them.</p>
-<p>There is no sound.</p>
-<p>When teams cannot see where the break happened, they guess. They swap the model. They rewrite the tool description. They add documents. They chase symptoms because nothing in the logs marked the failure.</p>
-<p>Visibility fails when you cannot name the broken step. Quality fails when the answer is wrong or incomplete and nobody marks it. Both need a detection stage before you automate the fix path.</p>
-<p>I spent ninety days on a system that finds silent failures in a hosted AI assistant and routes evidence for fixes. The initial problem brief said to automate the path from a known failure to a shipped fix. The work that mattered first was making those silent failures audible.</p>
+<section id="clear-is-my-qualitative-coding-pipeline-notes-from-a-close-read" class="level1">
+<h1>CLEAR is my qualitative coding pipeline: notes from a close read</h1>
+<ul>
+<li><a href="https://arxiv.org/html/2507.18392v1">CLEAR</a></li>
+<li><a href="https://arxiv.org/html/2605.22608v1">Agentic CLEAR</a></li>
+</ul>
+<p>I finally saw my manual error-analysis process in a paper. Then I saw how it scales past me. On my teams, people treat error analysis as too manual. ICs who rarely do qualitative coding hit cognitive overload when the volume grows.</p>
+<section id="open-coding-automated" class="level2">
+<h2 class="anchored" data-anchor-id="open-coding-automated">Open coding, automated</h2>
+<p>I already ran open coding by hand. I read a failing trace and wrote a free-form critique of what broke. I wrote that diagnostic loop in <a href="https://manisnesan.github.io/chrestotes/posts/2025-11-27-stop-operating-blind.html">Stop Operating Blind</a>. CLEAR is the same loop with an LLM judge and Key Points Analysis.</p>
+<p>The judge writes the per-instance critique, with a score beside it. Key Points Analysis clusters those critiques into recurring issues and counts how often each one shows up. That clustering is axial coding at dataset scale. Mapping each issue back to its instances is the prevalence pass I used to do in a spreadsheet.</p>
+<p>My hand-built pipeline does not scale when several teams need the same capability and most of them have never done error analysis.</p>
 </section>
-<section id="what-we-were-handed-vs-what-we-learned" class="level2">
-<h2 class="anchored" data-anchor-id="what-we-were-handed-vs-what-we-learned">What we were handed vs what we learned</h2>
-<p>The initial problem brief assumed the hard part was already done. Failures were identified. The job was to automate the path from a known failure to a shipped fix.</p>
-<p>That path is useful. It is also incomplete when the agentic product fails silently without a signal. If nobody has marked the failure, there is nothing honest to automate.</p>
-<p>We added detection as its own stage. Before fix automation, the system had to decide which interactions looked broken, with what evidence, and which owning team should see them.</p>
-<p>The outcome we aimed at for product teams shifted with that change. Detect the failure. Classify and rank the failure. Package evidence someone can act on. Who applies the fix was still open at the start. We had not agreed the boundaries between teams.</p>
-<p>Early on, we and the stakeholders were figuring it out together. We were learning the real problem at the same time we were building the first slice of the system.</p>
-<p>You cannot jump into the solution only because the brief handed you one.</p>
+<section id="node-trace-rubric" class="level2">
+<h2 class="anchored" data-anchor-id="node-trace-rubric">Node, trace, rubric</h2>
+<p>In Agentic CLEAR, a judge scores each run at three levels: node (one step), trace (the whole run), and rubric (a task checklist the judge writes, then marks fulfilled or not).</p>
+<p>When I open-coded by hand, I packed node and trace into one line: “System provided a generic answer. Tool call expected but was not called.” That line holds both a step miss and a run-level miss. Whereas in Agentic CLEAR, separate judges score each level. Then it clusters node critiques per step with KPA and clusters trace-plus-rubric critiques across the system.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/agent_clear_flow.png" class="img-fluid figure-img"></p>
+<figcaption>Agentic CLEAR pipeline</figcaption>
+</figure>
+</div>
+<p>Figure: Agentic CLEAR flow. Traces go to Judge J for Trace Eval, Rubric Eval, and Step Eval. CLEAR aggregates system view (trace + rubric) and node view (steps split by node). Report UI shows sys, node, and trace views.</p>
 </section>
-<section id="problem-understanding-first-30-days" class="level2">
-<h2 class="anchored" data-anchor-id="problem-understanding-first-30-days">Problem understanding: first 30 days</h2>
-<p>We treated the first weeks as <a href="https://gist.github.com/jph00/d60301884c56fe063101a7cc6193b3af">Polya’s understand step</a>: write down the goal and the conditions before you plan the attack.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 40%">
-<col style="width: 59%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Ask first</th>
-<th>In this work</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>What outcome?</td>
-<td>Product teams detect failures, prioritize them, and get evidence for fixes</td>
-</tr>
-<tr class="even">
-<td>Who has the problem?</td>
-<td>Teams shipping agentic assistants</td>
-</tr>
-<tr class="odd">
-<td>What data exists?</td>
-<td>Traces from the assistant (or not)</td>
-</tr>
-<tr class="even">
-<td>What constraints?</td>
-<td>No traces means no detection; many failure surface layers means many owners</td>
-</tr>
-</tbody>
-</table>
-<p>The constraints chose the first candidate. Ambition said every product team. Traces said one hosted path.</p>
-<p>The first constraint was observability. Not every product team emits traces. We initially scoped to all product teams, but the engine needs trace data from the assistant. Without traces, there is nothing to detect against. We narrowed to one hosted experience where traces already existed, and said other teams need the same traces first.</p>
-<p>The second constraint was the failure surface layer: where in the stack the break shows up. In a conversational assistant that is content, retrieval, or the agent layer. Each needs different detection rules and routes to a different team. We needed shared failure categories before we could build a pipeline.</p>
-<p>The first thirty days produced three things. Detection criteria that filter traces to candidate failures. A map of failure surface layers (content, retrieval, agent) and what causes them. A small proof of concept that the same trace shape could feed the system for another product.</p>
-<p>We spent those weeks on constraints, candidates, and failure surface layers. That understanding set the order of the work.</p>
-</section>
-<section id="the-feasibility-trap" class="level2">
-<h2 class="anchored" data-anchor-id="the-feasibility-trap">The feasibility trap</h2>
-<p>We ran a friendly test on one known case. The failures were already pre-filtered from user negative feedback. The root cause was known. The fix was small and standalone, without side effects. We made AI-assisted code changes for the fix, kept a human in the loop, and raised a pull request for a downstream team. The first full pass finished in under an hour.</p>
-<p>That test proved a mechanism. A known failure can move from signal to proposed fix with human review. People took away a bigger story. They thought the engine can auto-fix the backlog.</p>
-<p>It could not. Each failure surface layer has a different owning team. Content, retrieval, and agent do not share one backlog. The test never checked which team owns which fix. It only used tools and access we already had on a case we already understood.</p>
-</section>
-<section id="sixty-days-proving-the-stages" class="level2">
-<h2 class="anchored" data-anchor-id="sixty-days-proving-the-stages">Sixty days: proving the stages</h2>
-<p>After the friendly test, we needed proof that each phase could run on real traffic, not only on failures we already understood.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 30%">
-<col style="width: 69%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Phase</th>
-<th>What it does</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Detection</td>
-<td>Filter, classify, and route</td>
-</tr>
-<tr class="even">
-<td>Remediation</td>
-<td>Triage with negative cases and apply the fix</td>
-</tr>
-<tr class="odd">
-<td>Verification</td>
-<td>Negative cases pass, and the regression suite does not get worse</td>
-</tr>
-</tbody>
-</table>
-<p>The next sixty days were about that kind of proof. We locked detection criteria so only candidate failures entered analysis. We built an agentic evaluation pipeline over shared failure categories for each failure surface layer: content, retrieval, and agent. Each category had a cause chain we could argue about. We mapped which owning team should see which class of evidence. We demoed tool-call failures, retrieval gaps, and content gaps to leadership and to the teams who’d have to act. This is what you hit in companies at scale, where multiple teams are part of one system.</p>
-<p>Outside our pipeline, the retrieval team shipped hybrid search. Some retrieval failures dropped for real. We could show a measurable improvement we didn’t ship ourselves. That hinted at the loop we wanted. Detect in the pipeline, say which team owns the gap, clear it on their side, and measure that customer friction moved.</p>
-<p>At sixty days I was still validating each stage with small proofs. Could detection run? Could triage classify? Could we route evidence? I was postponing the ownership questions the friendly test had already raised. The stages could run. Who absorbs the volume of the gaps we find, and who confirms a gap is gone, was still fuzzy.</p>
-</section>
-<section id="ninety-days-intake-is-not-the-whole-loop" class="level2">
-<h2 class="anchored" data-anchor-id="ninety-days-intake-is-not-the-whole-loop">Ninety days: intake is not the whole loop</h2>
-<p>At ninety days the question got sharper. Can we close content gaps at production scale? Technically, pieces of that path work. As a system the organization can run every week, we weren’t there yet.</p>
-<p>We proved intake at scale. Detection could filter real user traffic from traces. The evaluation pipeline could classify failures against the shared categories. Negative test cases could reach the teams responsible for each failure surface layer. What we had not proved was closure. An owning team absorbs a ranked item, ships a fix, and we can show customer friction moved.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 13%">
-<col style="width: 41%">
-<col style="width: 44%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Loop</th>
-<th>What it includes</th>
-<th>Who owned it here</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Intake</td>
-<td>Detect, classify, rank, route with packaged evidence</td>
-<td>We did</td>
-</tr>
-<tr class="even">
-<td>Clearance</td>
-<td>Ownership, trusted volume, priority, confirm the gap is gone</td>
-<td>Across team boundaries; we named this late</td>
-</tr>
-</tbody>
-</table>
-<p>Intake can scale inside one team’s control. Clearance only works when owning teams agree to absorb volume and confirm the gap is gone.</p>
-<p>The questions we still couldn’t answer were simple. Who owns the fix for each failure surface layer? What volume will receiving teams trust before the queue becomes noise? What gets priority when everything looks urgent? We raised those as risks with ways to reduce them. These are ownership and process questions.</p>
-<p>We proved intake at scale before we proved closure at scale. On purpose, once we saw the trap. Automate a firehose first, and you can spend the next quarter blaming downstream teams for drowning in tickets. We instead named the boundaries first, and “fixed” without “gap cleared” stops counting as a win.</p>
-<p>Building the system and agreeing the process go together. Outcomes stick only when the system, the process, and the boundaries are agreed.</p>
-</section>
-<section id="fix-faster-or-earn-trust-first-you-need-both" class="level2">
-<h2 class="anchored" data-anchor-id="fix-faster-or-earn-trust-first-you-need-both">Fix faster, or earn trust first: you need both</h2>
-<p>Once intake works, teams often split into two camps.</p>
-<p>One camp wants to fix faster: stronger tests, AI-drafted changes, less time on each pull request. The other wants to earn trust first: send fewer items, make ownership clear, and prove gaps actually close.</p>
-<p>Each one fails in a different way if you only do that side.</p>
-<p>Fix-faster work helps when volume is high and reviewers are the bottleneck. It falls short when nobody has agreed what is in scope or what comes first. “Human in the loop” here usually means someone reviews the PR.</p>
-<p>Earn-trust work helps when downstream teams will ignore a noisy queue. It falls short when you never invest in tests, so every fix still needs an expert reviewer. “Human in the loop” here also means people confirm scope, set priority, say the gap is gone, and catch cases that pass tests and still hurt users.</p>
-<p>The two camps meet on one practical question: what do the tests cover? Minimal human review is fine only if someone is still accountable when a “passing” change leaves customers stuck.</p>
-<p>We needed both. More pipeline without trust becomes a firehose of tickets. More process without a fast fix path becomes a committee that never ships. The real choice is where you spend this quarter’s attention, not which camp wins the meeting.</p>
-</section>
-<section id="the-job-shifted-from-building-to-framing" class="level2">
-<h2 class="anchored" data-anchor-id="the-job-shifted-from-building-to-framing">The job shifted from building to framing</h2>
-<p>I started as a builder. Midway through the ninety days I was doing more product-manager work: what outcome are we after, and what can the pipeline not decide by itself?</p>
-<p>Shipping a new stage is easy to show. The harder work was quieter. Say why silent failures matter. Ask early who owns the fix and how much volume teams will take. Make sure “we detected it” does not mean “we flooded the downstream team.”</p>
-<p>The trap is demos and ticket counts. You can show a classifier and a router and a rising backlog while the teams getting those tickets stop trusting them, and users still hit the same problems.</p>
-<p>Trust comes before volume. Do receiving teams believe what we send? Can we keep the queue small so they work the worst gaps first? A short ranked list beats dumping every candidate failure.</p>
-<p>We still had to build. Once the stages ran, though, the limit was not more features. It was agreement on ownership, priority, and pace.</p>
-</section>
-<section id="what-i-would-do-next" class="level2">
-<h2 class="anchored" data-anchor-id="what-i-would-do-next">What I would do next</h2>
-<p>I would stop counting how many tickets we filed. That number is busywork. I would ask the teams who get those tickets whether they trust them, and whether the list is small enough to work.</p>
-<p>I would track the bad gaps: ones that hurt users, raise risk, or keep coming back. Progress means those gaps close and stay closed. A long backlog is not progress.</p>
-<p>I would make one hosted product path work end to end before we add more products. Traces in, ranked evidence out, owners who fix and confirm. Spreading thin just makes a bigger firehose.</p>
-<p>Next I would keep the receiving teams’ trust, close the worst gaps, and deepen one hosted path. That order beats more routing.</p>
-</section>
-<section id="reflection" class="level2">
-<h2 class="anchored" data-anchor-id="reflection">Reflection</h2>
-<p>Make silent failures visible. Find who can fix them. Send a short ranked list teams will trust. Measure gaps that close. Tickets are not the win if users still hit the same walls.</p>
-<p>Spend the first weeks understanding the problem. Who is impacted. What are the constraints. What you are assuming. Where a small change helps most. Start where traces already exist. Prove value early. Open the path for other products later.</p>
-<p>At sixty days, prove the stages can run, and name who owns the fix and how much volume teams will take. Leadership can only settle those if you surface them early.</p>
-<p>Stay in the product seat when the demos get loud. Build something the organization can run, not only a pipeline to show.</p>
-<p>Measure what closed and whether trust held. Ticket count is noise.</p>
+<section id="what-a-fixed-taxonomy-cant-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-a-fixed-taxonomy-cant-do">What a fixed taxonomy can’t do</h2>
+<p>A fixed failure taxonomy only sees categories I already named. My first pass missed a kind of failure I had not named. A later pass had to add it. Until I did that manual cycle, scored runs never counted that miss.</p>
+<p>With open coding and Key Points Analysis, critiques come first. Clusters form from the data. A new failure type appears in the report before I rewrite the label set.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
